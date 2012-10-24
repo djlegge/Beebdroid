@@ -72,10 +72,8 @@ public class Beebdroid extends Activity implements AdListener
 {
 	private static final String TAG="Beebdroid";
 	public static boolean use25fps = false;
-	
 	Model model;
     DiskInfo diskInfo;
-    //int last_trigger;
     int keyboardTextWait;
     Boolean audioEnabled = true; // global on/off for audio
 	AudioTrack audio;
@@ -88,18 +86,12 @@ public class Beebdroid extends Activity implements AdListener
 	KeyCharacterMap map = KeyCharacterMap.load(0); // this android device's default key map
 	int fps, skipped;
 	TextView tvFps;
-	//boolean keyboardShowing = true;
-	
 	int keyboardShowing = 1; // DCH 1 = keyboard, 2 = buttons, 0 = nothing 
-	
 	ControllerInfo currentController;
-	//boolean isXperiaPlay;
-	
     // Load our native library
     static {
         System.loadLibrary("bbcmicro");
     }
-
     // JNI interface
     public native void bbcInit(ByteBuffer mem, ByteBuffer roms, byte[] audiob, int flags);
     public native void bbcBreak(int flags);
@@ -116,49 +108,48 @@ public class Beebdroid extends Activity implements AdListener
     long time_fps;
 	// ===========================================================================
 	// === 
-	// === 
+	// === This runnable drives the native emulation code 
 	// === 
 	// ===========================================================================
-
-    // This runnable drives the native emulation code
+    
+    //long lastRun = android.os.SystemClock.uptimeMillis(); // perftest
+    //long maxTimeBetweenRuns = 0; // perftest
+    //long timeSinceMTBRreset = android.os.SystemClock.uptimeMillis(); // perftest
+	//long mtbr = now - lastRun; // perftest
+	//if (mtbr > maxTimeBetweenRuns) maxTimeBetweenRuns = mtbr; // perftest
+	//lastRun = now; // perftest
+    //handler.postAtTime(runInt50, now + 20); // Execute 1/50th of a second of BBC micro!
+	//long msTillNextRun = 20;
+	//(now - lastRunnableNow) <= 20 ? 20 : 20 - (now - lastRunnableNow);
+	//long msSLR = now - lastRunnableNow;
+    
+    long lastRunnableNow = android.os.SystemClock.uptimeMillis();
+    
     private Runnable runInt50 = new Runnable() {
     	@Override public void run() {
-    		// Execute 1/50th of a second of BBC micro!
-    		long now = android.os.SystemClock.uptimeMillis();
-            handler.postAtTime(runInt50, now + 20); // ensure this is 20ms for 50Hz operation
-    		if (beebView.gl == null) 
-    		{
-    			if (beebView.egl == null) 
-    			{
+			// === 
+			// === Remember when this run started
+			// === 
+    		long now = android.os.SystemClock.uptimeMillis();    
+    		long msTillNextRun = 20;
+    		if ((now - lastRunnableNow) > 20) msTillNextRun = 20 - (now - lastRunnableNow);
+    		if (msTillNextRun < 1) msTillNextRun = 1;
+            handler.postAtTime(runInt50, now + msTillNextRun);
+    		lastRunnableNow = now;    		
+			// === 
+			// === Initialise the GL surface 
+			// === 
+            if (beebView.gl == null) {
+    			if (beebView.egl == null) {
     				return; // no surface yet
     			}
     			beebView.initgl();
     			bbcInitGl(beebView.width, beebView.height);
     		}
-    		//int trigger = 
-    			bbcRun();
-
-    		// TODO is this needed?
-//    		// Handle trigger events 
-//    		if (controller.controllerInfo != null) {
-//	    		if (trigger != last_trigger && controller.controllerInfo.triggers != null) {
-//	    			Log.d("Trigger!", "PC hit trigger " + trigger);
-//	    			last_trigger = trigger;
-//    			
-//	    			// DCH - fix crash of Imogen at startup 
-//	    			// 10-13 20:30:28.366: E/AndroidRuntime(6728): java.lang.IndexOutOfBoundsException: Invalid index 1, size is 0
-//    				// 10-13 20:30:28.366: E/AndroidRuntime(6728): 	at com.littlefluffytoys.beebdroid.Beebdroid$1.run(Beebdroid.java:132)
-//	    			//int triggerToGet = trigger-1;
-//	    			if (controller.controllerInfo.triggers.contains(trigger-1))    			
-//	    				onTriggerFired(controller.controllerInfo.triggers.get(trigger-1));
-//	    			//else
-//	    				//Log.d("Trigger!", "controller.controllerInfo.triggers does not contain [" + trigger-1 + "]");	    			
-//	    			
-//	    		}
-//    		}
-    		// TODO is this needed?
-    		
-            // Automatic keyboard text
+			bbcRun();
+			// === 
+			// === Automatic keyboard text 
+			// === 
             if (keyboardTextWait > 0) {
             	keyboardTextWait--;
             }
@@ -180,27 +171,17 @@ public class Beebdroid extends Activity implements AdListener
             }
     	}
     };
-       
-    
-    
-    private Boolean SDimageLoaded = false;
 	// ===========================================================================
 	// === 
 	// === 
 	// === 
 	// ===========================================================================	
+    private Boolean SDimageLoaded = false;
     @Override
-	public boolean onKeyDown(int keycode, KeyEvent event) {
-    	//Log.d(TAG, "onKeyDown " + keycode);    	
-//    	if (isXperiaPlay && onXperiaKey(keycode, event, 1)) {
-//			return true;
-//		}    	
+	public boolean onKeyDown(int keycode, KeyEvent event) { 	
     	// If pressed 'back' while game loaded, reset the emulator rather than exit the app
-    	if (keycode == KeyEvent.KEYCODE_BACK) {
-    		
-    		
+    	if (keycode == KeyEvent.KEYCODE_BACK) {	
     		if (SDimageLoaded == true || diskInfo != null) {
-    	        //bbcInit(model.mem, model.roms, audiobuff, model.info.flags);
     	        bbcBreak(0);
     			diskInfo = null;
     			SDimageLoaded = false;
@@ -216,8 +197,7 @@ public class Beebdroid extends Activity implements AdListener
     	Key akc = controller.getBBCkeyGivenAndroidKeyCode(keycode);
     	if (akc != null) bbcKeyEvent(akc.scancode, shiftDown?1:0, 1);    	
     	return super.onKeyDown(keycode, event);
-    }
-    
+    }    
 	// ===========================================================================
 	// === 
 	// === 
@@ -225,9 +205,6 @@ public class Beebdroid extends Activity implements AdListener
 	// ===========================================================================	
     @Override
 	public boolean onKeyUp(int keycode, KeyEvent event) {
-//    	if (isXperiaPlay && onXperiaKey(keycode, event, 0)) {
-//			return true;
-//		}
     	if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT || keycode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
     		shiftDown = false;
     	}    	
@@ -235,19 +212,31 @@ public class Beebdroid extends Activity implements AdListener
     	if (akc != null) bbcKeyEvent(akc.scancode, shiftDown?1:0, 0); 
     	return super.onKeyUp(keycode, event);
     }
-
 	// ===========================================================================
 	// === 
 	// === 
 	// === 
 	// ===========================================================================	
     
+    
+
+	//boolean keyboardShowing = true;
+    //int last_trigger;
+	//boolean isXperiaPlay;
+    //bbcInit(model.mem, model.roms, audiobuff, model.info.flags);
+//	if (isXperiaPlay && onXperiaKey(keycode, event, 0)) {
+//	return true;
+//}    	//Log.d(TAG, "onKeyDown " + keycode);    	
+//	if (isXperiaPlay && onXperiaKey(keycode, event, 1)) {
+//	return true;
+//}   
 //    private void  onTriggerFired(TriggerAction triggerAction) {
 //    	//if (triggerAction instanceof TriggerActionSetController) {
 //    	//	TriggerActionSetController actionSetController = (TriggerActionSetController)triggerAction;
 //    	//	setController(actionSetController.controllerInfo);
 //    	//}
 //    }
+    
     
     private void doFakeKeys(String text) {
 		KeyEvent[] evs = map.getEvents(text.toCharArray());
@@ -260,14 +249,13 @@ public class Beebdroid extends Activity implements AdListener
 	// ===========================================================================	
 	private static final String PREFKEY_AD_TIMESTAMP = "AdTimestamp";
     static final long AD_POSTPONE_TIME = 3 * 60 * 60 * 1000; // 3 hours
-
+	// === 
     void setAdVisibility() {
         final AdView adView = (AdView)findViewById(R.id.adView);
 		if (adView != null) {
 			final long adTimestamp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getLong(PREFKEY_AD_TIMESTAMP, 0);
 			if (adTimestamp == 0) {
-				// first time run - postpone ads
-				postponeAds();
+				postponeAds(); // first time run - postpone ads
 			}
 			final boolean showAds = (adTimestamp != 0 && (adTimestamp > System.currentTimeMillis() || (System.currentTimeMillis() - adTimestamp > AD_POSTPONE_TIME)));
 			
@@ -293,11 +281,11 @@ public class Beebdroid extends Activity implements AdListener
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-     
         WakeLockAcquire();
+        CreateSDcardDirectories();
         
         
-        // TODO remove this test stuff
+        // TOxDO remove this test stuff
                 
 //        String s;
 //        int i;
@@ -350,9 +338,9 @@ public class Beebdroid extends Activity implements AdListener
 //		ck.androidKeyCode2 = -1;
 //		Controllers.writeKeyConfigRow("testing", ck);
 		
-        // TODO remove this test stuff
+        // TOxDO remove this test stuff
 
-        use25fps = false; // Build.DEVICE.equals("bravo"); // TODO what do we do wtih this?
+        use25fps = false; // Build.DEVICE.equals("bravo"); // TOxDO what do we do wtih this?
         
         //Log.d("Build", "Its a " + Build.DEVICE);
         Analytics.trackPageView(getApplicationContext(), "/start");
@@ -382,11 +370,14 @@ public class Beebdroid extends Activity implements AdListener
         	InstalledDisks.load(this);
         	audiobuff = new byte[2000*2];
         	
-	        audio = new AudioTrack(AudioManager.STREAM_MUSIC, 31250, 
-	        		AudioFormat.CHANNEL_OUT_MONO,
-	        		AudioFormat.ENCODING_PCM_16BIT, 
-	        		16384, 
-	        		AudioTrack.MODE_STREAM);
+        	if (audioEnabled)
+        	{
+    	        audio = new AudioTrack(AudioManager.STREAM_MUSIC, 31250, 
+    	        		AudioFormat.CHANNEL_OUT_MONO,
+    	        		AudioFormat.ENCODING_PCM_16BIT, 
+    	        		16384, 
+    	        		AudioTrack.MODE_STREAM);
+        	}
 
 	        model = new Model();
 	        
@@ -479,7 +470,7 @@ public class Beebdroid extends Activity implements AdListener
     public void onStop() {
     	super.onStop();
     	bbcExit();
-    	audio.stop();
+    	if (audioEnabled) audio.stop();
     	playing = false;
         Analytics.dispatch();
         WakeLockRelease();
@@ -815,7 +806,11 @@ public class Beebdroid extends Activity implements AdListener
 		return  (d * DPI_MULT + 0.5f);
 	}
 	//public static boolean useDpad = false;
-	
+	// =======================================================================
+	// === 
+	// === 
+	// === 
+	// =======================================================================
 	public static class BeebView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		// Emulated display
@@ -923,29 +918,14 @@ public class Beebdroid extends Activity implements AdListener
 			cleanupgl();
 			egl = null;
 		}
-	    
-	   /* public void blit(int wh) {
-			screenwidth = wh & 0xffff;
-			if (screenwidth<=320) screenwidth*=2;
-			screenheight = wh>>16;
-			
-			// Try to fill the display properly
-	    	//rcSrc.set(0,0,W, H);
-	    	//int adj = (W - screenwidth)/2;
-	    	//rcSrc.inset(adj, 0);
-	    	//int w = getMeasuredWidth();
-	    	//float fh = w * ASPECT;
-	    	//fh *= 1.2f + (adj/(float)W);
-	    	//rcDst.set(0,0, w, (int)fh);
-	    	
-	    	Canvas canvas = getHolder().lockCanvas();
-	        canvas.drawBitmap(screen, rcSrc, rcDst, paint);
-	        getHolder().unlockCanvasAndPost(canvas);
-	    }*/
-
-
-
 	}
+	
+	// =======================================================================
+	// === 
+	// === 
+	// === 
+	// =======================================================================
+	
 	public void videoCallback() {
 		fps++;		
 		if (use25fps && (1==(fps&1))) 
@@ -959,9 +939,10 @@ public class Beebdroid extends Activity implements AdListener
 		}		
 		// Update status text once per second
 		if (System.currentTimeMillis() - time_fps >=1000) {
-			tvFps.setText("FPS: " + fps);
+			tvFps.setText("FPS: " + fps); // + " MTBR: " + maxTimeBetweenRuns);
 			fps = 0;
 			skipped = 0;
+			//maxTimeBetweenRuns = 0;
 			time_fps = System.currentTimeMillis();
 		}		
 	}
@@ -1032,7 +1013,7 @@ public class Beebdroid extends Activity implements AdListener
 	
 	long lastAudioCallbackTime;
 	
-	// TODO try removing this for speed
+	// TOxDO try removing this for speed
 	
 	public void audioCallback(int pos, int cb) {
 // this removed		
@@ -1198,6 +1179,43 @@ public class Beebdroid extends Activity implements AdListener
 //		return false;
 //	}
 	
+	
+	
+	// =======================================================================
+	// === 
+	// === Create the directories on the SD card
+	// === 
+	// =======================================================================
+    private static void CreateSDcardDirectories()
+    {
+        try
+        {
+        	File dir = new File(Utils.SDrootPathSlash + "logs");
+    		dir.mkdirs();
+        }
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+        try
+        {
+        	File dir = new File(Utils.SDrootPathSlash + "disks");
+    		dir.mkdirs();
+        }
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+        try
+        {
+        	File dir = new File(Utils.SDrootPathSlash + "config");
+    		dir.mkdirs();
+        }
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+    }
 	// =======================================================================
 	// === 
 	// === Aquire and release a wakelock 

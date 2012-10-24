@@ -2,10 +2,8 @@ package com.littlefluffytoys.beebdroid;
 
 import java.util.ArrayList;
 
-import common.Utils;
-
 //import common.Utils;
-
+//import common.Utils;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -134,11 +132,11 @@ public class TouchpadsView extends View {
 		for (Key k : allkeys) {
 			keyCount += 1;
 			if (k.androidKeyCode1 == keyCode || k.androidKeyCode2 == keyCode) {
-				Utils.writeLog("getBBCkeyGivenAndroidKeyCode[" + keyCode + "] Match [" + k.androidKeyCode1 + "]or[" + k.androidKeyCode2 + "]"); //  [" + keyCount + "]
+				//Utils.writeLog("getBBCkeyGivenAndroidKeyCode[" + keyCode + "] Match [" + k.androidKeyCode1 + "]or[" + k.androidKeyCode2 + "]"); //  [" + keyCount + "]
 				return k;
 			}
 		}
-		Utils.writeLog("getBBCkeyGivenAndroidKeyCode[" + keyCode + "] No Match"); // [" + keyCount + "]");
+		//Utils.writeLog("getBBCkeyGivenAndroidKeyCode[" + keyCode + "] No Match"); // [" + keyCount + "]");
 		return null;
 	}
 	
