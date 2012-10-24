@@ -129,10 +129,13 @@ public class Beebdroid extends Activity implements AdListener
 	    		if (trigger != last_trigger && controller.controllerInfo.triggers != null) {
 	    			Log.d("Trigger!", "PC hit trigger " + trigger);
 	    			last_trigger = trigger;
-	    			onTriggerFired(controller.controllerInfo.triggers.get(trigger-1));
+	    			// Fix crash of Imogen at startup 
+	    			// 10-13 20:30:28.366: E/AndroidRuntime(6728): java.lang.IndexOutOfBoundsException: Invalid index 1, size is 0
+    				// 10-13 20:30:28.366: E/AndroidRuntime(6728): 	at com.littlefluffytoys.beebdroid.Beebdroid$1.run(Beebdroid.java:132)
+	    			if (controller.controllerInfo.triggers.contains(trigger-1))    	    			
+	    				onTriggerFired(controller.controllerInfo.triggers.get(trigger-1));
 	    		}
     		}
-    		
             
             // Automatic keyboard text
             if (keyboardTextWait > 0) {
