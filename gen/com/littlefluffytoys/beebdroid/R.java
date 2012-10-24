@@ -95,65 +95,77 @@ containing a value of this type.
         public static final int form_standalone_focused=0x7f020007;
         public static final int form_standalone_normal=0x7f020008;
         public static final int form_standalone_pressed=0x7f020009;
-        public static final int icon=0x7f02000a;
-        public static final int key=0x7f02000b;
-        public static final int key_fn=0x7f02000c;
-        public static final int keyboard=0x7f02000d;
-        public static final int keyboard_cancel=0x7f02000e;
-        public static final int led_off=0x7f02000f;
-        public static final int led_on=0x7f020010;
-        public static final int pad_pressed=0x7f020011;
-        public static final int save=0x7f020012;
-        public static final int tab=0x7f020013;
-        public static final int tab1=0x7f020014;
-        public static final int tab_bg_selected=0x7f020015;
-        public static final int tab_bg_selector=0x7f020016;
-        public static final int tab_bg_unselected=0x7f020017;
-        public static final int tab_normal=0x7f020018;
-        public static final int tab_text_selector=0x7f020019;
+        public static final int ic_action_search=0x7f02000a;
+        public static final int icon=0x7f02000b;
+        public static final int key=0x7f02000c;
+        public static final int key_fn=0x7f02000d;
+        public static final int keyboard=0x7f02000e;
+        public static final int keyboard_cancel=0x7f02000f;
+        public static final int led_off=0x7f020010;
+        public static final int led_on=0x7f020011;
+        public static final int pad_pressed=0x7f020012;
+        public static final int save=0x7f020013;
+        public static final int tab=0x7f020014;
+        public static final int tab1=0x7f020015;
+        public static final int tab_bg_selected=0x7f020016;
+        public static final int tab_bg_selector=0x7f020017;
+        public static final int tab_bg_unselected=0x7f020018;
+        public static final int tab_normal=0x7f020019;
+        public static final int tab_text_selector=0x7f02001a;
     }
     public static final class id {
+        public static final int BTclose=0x7f040014;
+        public static final int BTdelete=0x7f040015;
+        public static final int BTreadKey=0x7f040013;
+        public static final int BTsave=0x7f040012;
+        public static final int LBandroidKey=0x7f040010;
+        public static final int LBbbcKey=0x7f040011;
         public static final int adView=0x7f04000c;
-        public static final int age=0x7f040014;
+        public static final int age=0x7f04001a;
         public static final int beeb=0x7f040007;
         public static final int bottom=0x7f040001;
         public static final int btnInput=0x7f04000a;
-        public static final int btnOverwrite=0x7f040016;
-        public static final int btnRestore=0x7f040017;
+        public static final int btnOverwrite=0x7f04001c;
+        public static final int btnRestore=0x7f04001d;
         public static final int btnSave=0x7f04000d;
         public static final int button_ok=0x7f040005;
-        public static final int buttons=0x7f040015;
+        public static final int buttons=0x7f04001b;
         public static final int controller=0x7f040009;
-        public static final int emptyView=0x7f040018;
+        public static final int emptyView=0x7f04001e;
         public static final int flipper=0x7f04000e;
         public static final int fps=0x7f04000b;
-        public static final int image=0x7f040010;
-        public static final int installed=0x7f040013;
+        public static final int image=0x7f040016;
+        public static final int installed=0x7f040019;
         public static final int keyboard=0x7f040008;
         public static final int left=0x7f040002;
         public static final int list=0x7f04000f;
+        public static final int menu_settings=0x7f040021;
         public static final int right=0x7f040003;
         public static final int root=0x7f040006;
         public static final int showNextTime=0x7f040004;
-        public static final int subtitle=0x7f040012;
-        public static final int tabsLayout=0x7f040019;
-        public static final int tabsText=0x7f04001a;
-        public static final int title=0x7f040011;
+        public static final int subtitle=0x7f040018;
+        public static final int tabsLayout=0x7f04001f;
+        public static final int tabsText=0x7f040020;
+        public static final int title=0x7f040017;
         public static final int top=0x7f040000;
     }
     public static final class layout {
         public static final int activity_about=0x7f030000;
         public static final int activity_beebdroid=0x7f030001;
         public static final int activity_controllers=0x7f030002;
-        public static final int activity_loaddisk=0x7f030003;
-        public static final int activity_savedgames=0x7f030004;
-        public static final int listitem_add_new_saved_game=0x7f030005;
-        public static final int listitem_controllerinfo=0x7f030006;
-        public static final int listitem_diskinfo=0x7f030007;
-        public static final int listitem_savedgame=0x7f030008;
-        public static final int listview=0x7f030009;
-        public static final int listview_online=0x7f03000a;
-        public static final int tabs_bg=0x7f03000b;
+        public static final int activity_edit_game_key=0x7f030003;
+        public static final int activity_loaddisk=0x7f030004;
+        public static final int activity_savedgames=0x7f030005;
+        public static final int listitem_add_new_saved_game=0x7f030006;
+        public static final int listitem_controllerinfo=0x7f030007;
+        public static final int listitem_diskinfo=0x7f030008;
+        public static final int listitem_savedgame=0x7f030009;
+        public static final int listview=0x7f03000a;
+        public static final int listview_online=0x7f03000b;
+        public static final int tabs_bg=0x7f03000c;
+    }
+    public static final class menu {
+        public static final int activity_edit_game_key=0x7f090000;
     }
     public static final class string {
         public static final int about_copyright=0x7f080005;
@@ -165,10 +177,13 @@ containing a value of this type.
         public static final int about_text0=0x7f080004;
         public static final int app_name=0x7f080000;
         public static final int app_name2=0x7f080001;
+        public static final int hello_world=0x7f08000d;
         public static final int hint_load_disks=0x7f08000a;
         public static final int hint_space_to_start=0x7f08000c;
         public static final int hint_switch_keyboards=0x7f08000b;
+        public static final int menu_settings=0x7f08000e;
         public static final int ok_button=0x7f080009;
+        public static final int title_activity_edit_game_key=0x7f08000f;
     }
     public static final class style {
         public static final int BeebdroidTheme=0x7f060001;

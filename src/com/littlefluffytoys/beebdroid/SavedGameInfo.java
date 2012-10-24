@@ -36,16 +36,12 @@ public class SavedGameInfo {
 	public Bitmap thumbnail;
 	public long offsetToMachineData;
 	public long timestamp;
-	
-	
+		
 	public static ArrayList<SavedGameInfo> savedGames;
-	
-	
 	
 	public static void init(Context c) {
 		savedGames = new ArrayList<SavedGameInfo>();
-		
-		
+				
 		File[] files = c.getFilesDir().listFiles();
 		if (files == null) {
 			return;
@@ -78,7 +74,8 @@ public class SavedGameInfo {
 				info.offsetToMachineData =  fin.getChannel().position();
 				
 				int cbMachine = din.readInt();
-				long skipped = din.skip(cbMachine);
+				//long skipped = 
+					din.skip(cbMachine);
 				
 				// Thumbnail
 				//int cbThumb = din.readInt();
@@ -141,7 +138,8 @@ public class SavedGameInfo {
 		int thumbWidth = (int)Beebdroid.dp(160);
 		int thumbHeight = (int)Beebdroid.dp(128);
 		Bitmap bmp = Bitmap.createBitmap(800, 600, Bitmap.Config.RGB_565);
-    	int dims = beebdroid.bbcGetThumbnail(bmp);
+    	//int dims = 
+    	beebdroid.bbcGetThumbnail(bmp);
 		thumbnail = Bitmap.createBitmap(thumbWidth, thumbHeight, Config.ARGB_8888);
 		Canvas canvas = new Canvas(thumbnail);
 		Paint paint = new Paint();

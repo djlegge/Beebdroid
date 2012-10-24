@@ -1,75 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.littlefluffytoys.beebdroid"
-	android:versionCode="6"
-	android:versionName="1.3">
+    package="com.littlefluffytoys.beebdroid"
+    android:versionCode="6"
+    android:versionName="1.3" >
 
-	<supports-screens
-		android:smallScreens="false"
-		android:normalScreens="true"
-		android:largeScreens="true"
-		android:xlargeScreens="true"
-		android:anyDensity="true"/>
-	 
-	<application 
-		android:label="Beebdroid" 
-		android:icon="@drawable/icon">
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="false"
+        android:xlargeScreens="true" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
-		<activity
-		    android:name=".Beebdroid"
-			android:label="Beebdroid"
-			android:theme="@style/BeebdroidTheme">
+    <application
+        android:icon="@drawable/icon"
+        android:label="Beebdroid" >
+        <activity
+            android:name=".Beebdroid"
+            android:label="Beebdroid"
+            android:theme="@style/BeebdroidTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.littlefluffytoys.beebdroid.OPEN_DISK" />
 
-			<intent-filter>
-				<action android:name="com.littlefluffytoys.beebdroid.OPEN_DISK"/>
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<data android:scheme="file" />
-				<data android:mimeType="*/*" />
-				<data android:pathPattern=".*\\.ssd" />
-				<data android:host="*" />
-			</intent-filter>
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.ssd" />
+                <data android:host="*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".LoadDisk"
+            android:label="Load Disk"
+            android:theme="@style/DialogNoTitle" />
+        <activity
+            android:name="com.google.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode" />
+        <activity
+            android:name=".AboutActivity"
+            android:configChanges="orientation"
+            android:label="About"
+            android:theme="@android:style/Theme.Dialog" />
 
-		</activity>
-		
-		<activity 
-			android:name=".LoadDisk"
-			android:theme="@style/DialogNoTitle"
-			android:label="Load Disk"/>
+        <meta-data
+            android:name="ADMOB_ALLOW_LOCATION_FOR_ADS"
+            android:value="true" />
+        <meta-data
+            android:name="ADMOB_PUBLISHER_ID"
+            android:value="a14ea4abdce59d1" />
 
-		<activity android:name="com.google.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode"/>
+        <activity
+            android:name=".EditGameKeyActivity"
+            android:label="@string/title_activity_edit_game_key" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-		<activity 
-			android:name=".AboutActivity"
-			android:label="About" 
-			android:configChanges="orientation" 
-			android:theme="@android:style/Theme.Dialog" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 
-		<meta-data android:value="true" android:name="ADMOB_ALLOW_LOCATION_FOR_ADS" />
-		<meta-data android:value="a14ea4abdce59d1" android:name="ADMOB_PUBLISHER_ID" />
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="10" />
 
-	</application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="10" />
+    <uses-feature
+        android:name="android.hardware.location"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.location.network"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="com.android.vending.BILLING" />
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-	<uses-feature android:name="android.hardware.location" android:required="true" /> 
-	<uses-feature android:name="android.hardware.location.network" android:required="false" /> 
-	<uses-feature android:name="android.hardware.location.gps" android:required="false" />
-	<uses-feature android:name="android.hardware.wifi" android:required="false" /> 
-	<uses-feature android:name="android.hardware.telephony" android:required="false" /> 
-
-</manifest> 
+</manifest>

@@ -2,6 +2,10 @@ package com.littlefluffytoys.beebdroid;
 
 import java.util.ArrayList;
 
+import common.Utils;
+
+//import common.Utils;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -11,18 +15,16 @@ import android.graphics.Paint.Align;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable.Orientation;
+//import android.graphics.drawable.GradientDrawable.Orientation;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.GestureDetector;
+//import android.util.Log;
+//import android.util.Log;
+//import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-
 public class TouchpadsView extends View {
-	
-	
-	
+
 	public void defaultOnKeyPressed(Key key, boolean pressed) {
 	}
 	
@@ -36,6 +38,8 @@ public class TouchpadsView extends View {
     	float layout_width;
     	float layout_weight;
     	int scancode;
+		int androidKeyCode1; // DCH added
+		int androidKeyCode2; // DCH added
     	boolean pressed;
     	RectF bounds;
     	KeyListener listener;
@@ -51,10 +55,9 @@ public class TouchpadsView extends View {
     }
 	
 	
-	public ArrayList<Key> allkeys = new ArrayList<Key>();
+	public ArrayList<Key> allkeys = new ArrayList<Key>(); // controller keys, not bbc keyboard keys
+	
 	public boolean shiftPressed;
-	
-	
 	public Beebdroid beebdroid;
 	private Drawable padDrawable, padDrawableFn, padDrawableHilite;
 	private Paint paint, paintBig, paintTiny;
@@ -89,31 +92,32 @@ public class TouchpadsView extends View {
 	private Key[] pressedPads = {null,null,null,null};
 
 	
-	private void dumpEvent(MotionEvent event) {
-	   String names[] = { "DOWN" , "UP" , "MOVE" , "CANCEL" , "OUTSIDE" ,
-	      "POINTER_DOWN" , "POINTER_UP" , "7?" , "8?" , "9?" };
-	   StringBuilder sb = new StringBuilder();
-	   int action = event.getAction();
-	   int actionCode = action & MotionEvent.ACTION_MASK;
-	   sb.append("event ACTION_" ).append(names[actionCode]);
-	   if (actionCode == MotionEvent.ACTION_POINTER_DOWN
-	         || actionCode == MotionEvent.ACTION_POINTER_UP) {
-	      sb.append("(pid " ).append(
-	      action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
-	      sb.append(")" );
-	   }
-	   sb.append("[" );
-	   for (int i = 0; i < event.getPointerCount(); i++) {
-	      sb.append("#" ).append(i);
-	      sb.append("(pid " ).append(event.getPointerId(i));
-	      sb.append(")=" ).append((int) event.getX(i));
-	      sb.append("," ).append((int) event.getY(i));
-	      if (i + 1 < event.getPointerCount())
-	         sb.append(";" );
-	   }
-	   sb.append("]" );
-	   Log.d("Touch", sb.toString());
-	}
+//	@SuppressWarnings("unused")
+//	private void dumpEvent(MotionEvent event) {
+//	   String names[] = { "DOWN" , "UP" , "MOVE" , "CANCEL" , "OUTSIDE" ,
+//	      "POINTER_DOWN" , "POINTER_UP" , "7?" , "8?" , "9?" };
+//	   StringBuilder sb = new StringBuilder();
+//	   int action = event.getAction();
+//	   int actionCode = action & MotionEvent.ACTION_MASK;
+//	   sb.append("event ACTION_" ).append(names[actionCode]);
+//	   if (actionCode == MotionEvent.ACTION_POINTER_DOWN
+//	         || actionCode == MotionEvent.ACTION_POINTER_UP) {
+//	      sb.append("(pid " ).append(
+//	      action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
+//	      sb.append(")" );
+//	   }
+//	   sb.append("[" );
+//	   for (int i = 0; i < event.getPointerCount(); i++) {
+//	      sb.append("#" ).append(i);
+//	      sb.append("(pid " ).append(event.getPointerId(i));
+//	      sb.append(")=" ).append((int) event.getX(i));
+//	      sb.append("," ).append((int) event.getY(i));
+//	      if (i + 1 < event.getPointerCount())
+//	         sb.append(";" );
+//	   }
+//	   sb.append("]" );
+//	   Log.d("Touch", sb.toString());
+//	}
 	
 	private Key hitTest(int x, int y) {
 		for (Key key : allkeys) {
@@ -123,8 +127,24 @@ public class TouchpadsView extends View {
 		}
 		return null;
 	}
-
-	@Override public boolean onTouchEvent(MotionEvent event) {
+	
+	// DCH given an android key, return the BBC key related to it.  This is used when we get a key code from a joystick or external keyboard.
+	public Key getBBCkeyGivenAndroidKeyCode(int keyCode) {
+		int keyCount = 0;
+		for (Key k : allkeys) {
+			keyCount += 1;
+			if (k.androidKeyCode1 == keyCode || k.androidKeyCode2 == keyCode) {
+				Utils.writeLog("getBBCkeyGivenAndroidKeyCode[" + keyCode + "] Match [" + k.androidKeyCode1 + "]or[" + k.androidKeyCode2 + "]"); //  [" + keyCount + "]
+				return k;
+			}
+		}
+		Utils.writeLog("getBBCkeyGivenAndroidKeyCode[" + keyCode + "] No Match"); // [" + keyCount + "]");
+		return null;
+	}
+	
+	
+	@Override 
+	public boolean onTouchEvent(MotionEvent event) {
 		//dumpEvent(event);
 		
 		int action = event.getAction();
@@ -228,6 +248,7 @@ public class TouchpadsView extends View {
 	
     @Override 
     protected void onDraw(Canvas canvas) {
+    	//int drawCount = 0;
     	for (Key key : allkeys) {
     		Drawable d = key.pressed?padDrawableHilite:padDrawable;
     		if (0 != (key.flags & 1)) {
@@ -253,7 +274,9 @@ public class TouchpadsView extends View {
     		else {
     			canvas.drawText(key.label, key.bounds.centerX(), y, key.label.length() > 1 ? paintTiny : paint);
     		}
+    		//drawCount += 1;
     	}
+    	//Log.i("Beebdroid", "TouchpadsView draw[" + drawCount + "]");
     }		
 }
 

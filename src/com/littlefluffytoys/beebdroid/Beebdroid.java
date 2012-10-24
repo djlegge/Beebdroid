@@ -7,12 +7,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+//import java.text.ParseException;
+//import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+//import java.util.Calendar;
+//import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -28,24 +28,27 @@ import com.google.ads.Ad;
 import com.google.ads.AdListener;
 import com.google.ads.AdView;
 import com.google.ads.AdRequest.ErrorCode;
-import com.littlefluffytoys.beebdroid.ControllerInfo.TriggerAction;
+//import com.littlefluffytoys.beebdroid.ControllerInfo.TriggerAction;
+import com.littlefluffytoys.beebdroid.TouchpadsView.Key;
 
 import common.Utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+//import android.app.AlertDialog;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.net.Uri;
-import android.os.Build;
+//import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.content.DialogInterface.OnDismissListener;
+//import android.content.DialogInterface;
+//import android.content.SharedPreferences;
+//import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -62,7 +65,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
+//import android.graphics.Rect;
 
 
 public class Beebdroid extends Activity implements AdListener
@@ -72,21 +75,25 @@ public class Beebdroid extends Activity implements AdListener
 	
 	Model model;
     DiskInfo diskInfo;
-    int last_trigger;
+    //int last_trigger;
     int keyboardTextWait;
+    Boolean audioEnabled = true; // global on/off for audio
 	AudioTrack audio;
 	byte[] audiobuff;
     Handler handler = new Handler();
     BeebView beebView;
     Keyboard keyboard;
     ControllerView controller;
-    List<KeyEvent> keyboardTextEvents = new ArrayList<KeyEvent>();
-	KeyCharacterMap map  = KeyCharacterMap.load(0);
+    List<KeyEvent> keyboardTextEvents = new ArrayList<KeyEvent>(); // buffer for fake key events 
+	KeyCharacterMap map = KeyCharacterMap.load(0); // this android device's default key map
 	int fps, skipped;
 	TextView tvFps;
-	boolean keyboardShowing = true;
+	//boolean keyboardShowing = true;
+	
+	int keyboardShowing = 1; // DCH 1 = keyboard, 2 = buttons, 0 = nothing 
+	
 	ControllerInfo currentController;
-	boolean isXperiaPlay;
+	//boolean isXperiaPlay;
 	
     // Load our native library
     static {
@@ -100,43 +107,57 @@ public class Beebdroid extends Activity implements AdListener
     public native int bbcRun();
     public native int bbcInitGl(int width, int height);
     public native void bbcLoadDisc(ByteBuffer disc, int autoboot);
-    public native void bbcSetTriggers(short[] pc_triggers);
+    //public native void bbcSetTriggers(short[] pc_triggers);
     public native void bbcKeyEvent(int scancode, int flags, int down);
     public native int bbcSerialize(byte[] buffer);
     public native void bbcDeserialize(byte[] buffer);
     public native int bbcGetThumbnail(Bitmap bmp);
 
     long time_fps;
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================
 
     // This runnable drives the native emulation code
     private Runnable runInt50 = new Runnable() {
     	@Override public void run() {
-    		
     		// Execute 1/50th of a second of BBC micro!
     		long now = android.os.SystemClock.uptimeMillis();
-            handler.postAtTime(runInt50, now+20);
-    		if (beebView.gl == null) {
-    			if (beebView.egl == null) { // no surface yet
-    				return;
+            handler.postAtTime(runInt50, now + 20); // ensure this is 20ms for 50Hz operation
+    		if (beebView.gl == null) 
+    		{
+    			if (beebView.egl == null) 
+    			{
+    				return; // no surface yet
     			}
     			beebView.initgl();
     			bbcInitGl(beebView.width, beebView.height);
     		}
-    		int trigger = bbcRun();
- 		
-    		// Handle trigger events 
-    		if (controller.controllerInfo != null) {
-	    		if (trigger != last_trigger && controller.controllerInfo.triggers != null) {
-	    			Log.d("Trigger!", "PC hit trigger " + trigger);
-	    			last_trigger = trigger;
-	    			// Fix crash of Imogen at startup 
-	    			// 10-13 20:30:28.366: E/AndroidRuntime(6728): java.lang.IndexOutOfBoundsException: Invalid index 1, size is 0
-    				// 10-13 20:30:28.366: E/AndroidRuntime(6728): 	at com.littlefluffytoys.beebdroid.Beebdroid$1.run(Beebdroid.java:132)
-	    			if (controller.controllerInfo.triggers.contains(trigger-1))    	    			
-	    				onTriggerFired(controller.controllerInfo.triggers.get(trigger-1));
-	    		}
-    		}
-            
+    		//int trigger = 
+    			bbcRun();
+
+    		// TODO is this needed?
+//    		// Handle trigger events 
+//    		if (controller.controllerInfo != null) {
+//	    		if (trigger != last_trigger && controller.controllerInfo.triggers != null) {
+//	    			Log.d("Trigger!", "PC hit trigger " + trigger);
+//	    			last_trigger = trigger;
+//    			
+//	    			// DCH - fix crash of Imogen at startup 
+//	    			// 10-13 20:30:28.366: E/AndroidRuntime(6728): java.lang.IndexOutOfBoundsException: Invalid index 1, size is 0
+//    				// 10-13 20:30:28.366: E/AndroidRuntime(6728): 	at com.littlefluffytoys.beebdroid.Beebdroid$1.run(Beebdroid.java:132)
+//	    			//int triggerToGet = trigger-1;
+//	    			if (controller.controllerInfo.triggers.contains(trigger-1))    			
+//	    				onTriggerFired(controller.controllerInfo.triggers.get(trigger-1));
+//	    			//else
+//	    				//Log.d("Trigger!", "controller.controllerInfo.triggers does not contain [" + trigger-1 + "]");	    			
+//	    			
+//	    		}
+//    		}
+    		// TODO is this needed?
+    		
             // Automatic keyboard text
             if (keyboardTextWait > 0) {
             	keyboardTextWait--;
@@ -159,92 +180,84 @@ public class Beebdroid extends Activity implements AdListener
             }
     	}
     };
+       
     
     
-    
+    private Boolean SDimageLoaded = false;
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
     @Override
 	public boolean onKeyDown(int keycode, KeyEvent event) {
-    	//Log.d(TAG, "onKeyDown " + keycode);
-    	
-    	if (isXperiaPlay && onXperiaKey(keycode, event, 1)) {
-			return true;
-		}
-    	
+    	//Log.d(TAG, "onKeyDown " + keycode);    	
+//    	if (isXperiaPlay && onXperiaKey(keycode, event, 1)) {
+//			return true;
+//		}    	
     	// If pressed 'back' while game loaded, reset the emulator rather than exit the app
     	if (keycode == KeyEvent.KEYCODE_BACK) {
-    		if (diskInfo != null) {
+    		
+    		
+    		if (SDimageLoaded == true || diskInfo != null) {
     	        //bbcInit(model.mem, model.roms, audiobuff, model.info.flags);
     	        bbcBreak(0);
     			diskInfo = null;
+    			SDimageLoaded = false;
     			SavedGameInfo.current = null;
-    			showKeyboard(true);
+    			showKeyboard(1);
     			Analytics.trackPageView(getApplicationContext(), "/reset");
     			return true;
     		}
     	}
-    	/*if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT || keycode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
-    		shiftDown = true;
-    	}
-    	else {
-    		bbcKeyEvent(lookup(keycode), shiftDown?1:0, 1);
-    	}*/
     	if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT || keycode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
     		shiftDown = true;
-    	}
-    	bbcKeyEvent(lookup(keycode), shiftDown?1:0, 1);
+    	}    	    	
+    	Key akc = controller.getBBCkeyGivenAndroidKeyCode(keycode);
+    	if (akc != null) bbcKeyEvent(akc.scancode, shiftDown?1:0, 1);    	
     	return super.onKeyDown(keycode, event);
     }
+    
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
     @Override
 	public boolean onKeyUp(int keycode, KeyEvent event) {
-    	if (isXperiaPlay && onXperiaKey(keycode, event, 0)) {
-			return true;
-		}
-    	//final int kc = keycode;
-    	//Log.d(TAG, "onKeyUp " + kc);
-    	/*handler.postDelayed(new Runnable() {
-    	@Override
-    	public void run() {
-	    	if (kc == KeyEvent.KEYCODE_SHIFT_LEFT || kc == KeyEvent.KEYCODE_SHIFT_RIGHT) {
-	    		shiftDown = false;
-	    	}
-	    	else {
-	    		bbcKeyEvent(lookup(kc), shiftDown?1:0, 0);
-	    	}
-    	}
-    	}, 10);*/
+//    	if (isXperiaPlay && onXperiaKey(keycode, event, 0)) {
+//			return true;
+//		}
     	if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT || keycode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
     		shiftDown = false;
-    	}
-    	bbcKeyEvent(lookup(keycode), shiftDown?1:0, 0);
+    	}    	
+    	Key akc = controller.getBBCkeyGivenAndroidKeyCode(keycode);
+    	if (akc != null) bbcKeyEvent(akc.scancode, shiftDown?1:0, 0); 
     	return super.onKeyUp(keycode, event);
     }
+
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
     
-    //
-    // onXperiaKey
-    //
-    private boolean onXperiaKey(int keycode, KeyEvent event, int isDown) {
-    	if (keycode==KeyEvent.KEYCODE_BACK && !event.isAltPressed()) return false;
-    	ControllerInfo.KeyInfo info = controller.controllerInfo.keyinfosMappedByAndroidKeycode.get(keycode);
-    	if (info != null) {
-    		bbcKeyEvent(info.scancode, shiftDown?1:0, isDown);
-    		return true;
-    	}
-		return false;
-	}
-
-    private void  onTriggerFired(TriggerAction triggerAction) {
-    	//if (triggerAction instanceof TriggerActionSetController) {
-    	//	TriggerActionSetController actionSetController = (TriggerActionSetController)triggerAction;
-    	//	setController(actionSetController.controllerInfo);
-    	//}
-    }
-
+//    private void  onTriggerFired(TriggerAction triggerAction) {
+//    	//if (triggerAction instanceof TriggerActionSetController) {
+//    	//	TriggerActionSetController actionSetController = (TriggerActionSetController)triggerAction;
+//    	//	setController(actionSetController.controllerInfo);
+//    	//}
+//    }
     
     private void doFakeKeys(String text) {
 		KeyEvent[] evs = map.getEvents(text.toCharArray());
 		keyboardTextEvents.addAll(Arrays.asList(evs));
     }
-    
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
 	private static final String PREFKEY_AD_TIMESTAMP = "AdTimestamp";
     static final long AD_POSTPONE_TIME = 3 * 60 * 60 * 1000; // 3 hours
 
@@ -271,13 +284,75 @@ public class Beebdroid extends Activity implements AdListener
 	    	}
 		}
     }
-    
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
      
-        use25fps = Build.DEVICE.equals("bravo");
+        WakeLockAcquire();
+        
+        
+        // TODO remove this test stuff
+                
+//        String s;
+//        int i;
+//        
+//    	s = BeebKeys.getKeyEventNameFromInt(KeyEvent.KEYCODE_BUTTON_2);
+//		i = BeebKeys.parseKeyEventIntFromString(s);
+//		s = BeebKeys.getKeyEventNameFromInt(i);
+//		
+//		s = BeebKeys.getBbcKeyNamefromInt(BeebKeys.BBCKEY_6);
+//        i = BeebKeys.parseBeebKeyIntFromString(s);
+//        s = BeebKeys.getBbcKeyNamefromInt(i);
+        
+        // KEYCODE_Q = 45;
+
+//    	ConfigKey ck = new ConfigKey();
+//		ck.label = "label1";
+//		ck.keylabel = "keylabel1";
+//		ck.xc = 1f;
+//		ck.yc = 1f;
+//		ck.width = 1f;
+//		ck.height = 1f;
+//		ck.scancode = BeebKeys.parseBeebKeyIntFromString("BBCKEY_A");
+//		ck.androidKeyCode1 = 32;
+//		ck.androidKeyCode2 = -1;
+//		Controllers.writeKeyConfigRow("testing", ck);
+//        		
+//		//   public static final int KEYCODE_DPAD_RIGHT = 22;
+//		
+//    	ck = new ConfigKey();
+//		ck.label = "label2";
+//		ck.keylabel = "keylabel2";
+//		ck.xc = 1f;
+//		ck.yc = 1f;
+//		ck.width = 1f;
+//		ck.height = 1f;
+//		ck.scancode = BeebKeys.parseBeebKeyIntFromString("BBCKEY_B");
+//		ck.androidKeyCode1 = 31;
+//		ck.androidKeyCode2 = -1;
+//		Controllers.writeKeyConfigRow("testing", ck);
+//		
+//    	ck = new ConfigKey();
+//		ck.label = "label3";
+//		ck.keylabel = "keylabel3";
+//		ck.xc = 1f;
+//		ck.yc = 1f;
+//		ck.width = 1f;
+//		ck.height = 1f;
+//		ck.scancode = BeebKeys.parseBeebKeyIntFromString("BBCKEY_C");
+//		ck.androidKeyCode1 = 30;
+//		ck.androidKeyCode2 = -1;
+//		Controllers.writeKeyConfigRow("testing", ck);
+		
+        // TODO remove this test stuff
+
+        use25fps = false; // Build.DEVICE.equals("bravo"); // TODO what do we do wtih this?
         
         //Log.d("Build", "Its a " + Build.DEVICE);
         Analytics.trackPageView(getApplicationContext(), "/start");
@@ -290,9 +365,9 @@ public class Beebdroid extends Activity implements AdListener
         DP_SCREEN_WIDTH = getResources().getDisplayMetrics().widthPixels;
 
         // Detect the Xperia Play, for which we do special magic
-        if (Build.DEVICE.equalsIgnoreCase("R800i") || Build.DEVICE.equalsIgnoreCase("zeus")) {
-        	isXperiaPlay = true;
-        }
+//        if (Build.DEVICE.equalsIgnoreCase("R800i") || Build.DEVICE.equalsIgnoreCase("zeus")) {
+//        	isXperiaPlay = true;
+//        }
         
         // Find UI bits and wire things up
         beebView = (BeebView)findViewById(R.id.beeb);
@@ -306,18 +381,25 @@ public class Beebdroid extends Activity implements AdListener
         if (prev == null) {
         	InstalledDisks.load(this);
         	audiobuff = new byte[2000*2];
+        	
 	        audio = new AudioTrack(AudioManager.STREAM_MUSIC, 31250, 
 	        		AudioFormat.CHANNEL_OUT_MONO,
 	        		AudioFormat.ENCODING_PCM_16BIT, 
 	        		16384, 
 	        		AudioTrack.MODE_STREAM);
+
 	        model = new Model();
+	        
 	        model.loadRoms(this, Model.SupportedModels[1]);
+	        
 	        bbcInit(model.mem, model.roms, audiobuff, 1);
-	        currentController = Controllers.DEFAULT_CONTROLLER;
+	        
+	        //currentController = Controllers.DEFAULT_CONTROLLER;
+	        
 			if (UserPrefs.shouldShowSplashScreen(this)) {
 				startActivity(new Intent(Beebdroid.this, AboutActivity.class));
-			}  
+			}
+			
 			processDiskViaIntent();
 		}    	
         else {
@@ -325,7 +407,7 @@ public class Beebdroid extends Activity implements AdListener
         	audio = prev.audio;
         	audiobuff = prev.audiobuff;
             diskInfo = prev.diskInfo;
-            last_trigger = prev.last_trigger;
+            //last_trigger = prev.last_trigger;
             keyboardTextWait = prev.keyboardTextWait;
             keyboardTextEvents = prev.keyboardTextEvents;
             keyboardShowing = prev.keyboardShowing;
@@ -341,7 +423,8 @@ public class Beebdroid extends Activity implements AdListener
 	        btnInput.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					showKeyboard(!keyboardShowing);
+					keyboardShowing = keyboardShowing == 2 ? 0 : keyboardShowing + 1; // DCH 0 to 1, 1 to 2, 2 to 0
+					showKeyboard(keyboardShowing);
 				}    	
 	        });
 		}
@@ -366,6 +449,50 @@ public class Beebdroid extends Activity implements AdListener
         UserPrefs.setGrandfatheredIn(this, true);
     }
 	
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
+    
+    @Override public Object onRetainNonConfigurationInstance() {
+    	return this;
+    }
+    
+    @Override
+    public void onResume() {
+    	super.onResume();
+    	WakeLockAcquire();
+        handler.postDelayed(runInt50, 20);
+        showHint("hint_load_disks", R.string.hint_load_disks, 5);
+    }
+    
+    @Override
+    public void onPause() {
+    	super.onPause();
+    	WakeLockRelease();
+        handler.removeCallbacks(runInt50);
+        cancelPendingHints();
+    }
+
+    @Override 
+    public void onStop() {
+    	super.onStop();
+    	bbcExit();
+    	audio.stop();
+    	playing = false;
+        Analytics.dispatch();
+        WakeLockRelease();
+//    	System.exit(0); // until native lib is stable
+    }
+
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
+    
+    
     private void processDiskViaIntent() {
         // Diskette passed from another process
         Intent intent = getIntent();
@@ -400,9 +527,13 @@ public class Beebdroid extends Activity implements AdListener
 					e.printStackTrace();
 				}
         	}
-        }
-    	
+        }    	
     }
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
     private static byte[] readInputStream(InputStream inputStream) throws IOException {
 		byte[] buffer = new byte[4096];
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(4096);
@@ -429,33 +560,11 @@ public class Beebdroid extends Activity implements AdListener
 	    return outputStream.toByteArray();
 	}    
     
-    @Override public Object onRetainNonConfigurationInstance() {
-    	return this;
-    }
-    
-    @Override
-    public void onResume() {
-    	super.onResume();
-        handler.postDelayed(runInt50, 20);
-        showHint("hint_load_disks", R.string.hint_load_disks, 5);
-    }
-    
-    @Override
-    public void onPause() {
-    	super.onPause();
-        handler.removeCallbacks(runInt50);
-        cancelPendingHints();
-    }
-
-    @Override 
-    public void onStop() {
-    	super.onStop();
-    	bbcExit();
-    	audio.stop();
-    	playing = false;
-        Analytics.dispatch();
-//    	System.exit(0); // until native lib is stable
-    }
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
     ByteBuffer diskImage;
     
     @Override
@@ -464,6 +573,15 @@ public class Beebdroid extends Activity implements AdListener
 		if (data != null) {
 			index = data.getIntExtra("index", -1);
 		}
+		
+		
+		//currentController.
+		
+		ControllerInfo controllerInfo = Controllers.getControllerInfo(controllerInfoDiskKeyName);
+		//if (controllerInfo == null) controllerInfo = Controllers.DEFAULT_CONTROLLER;
+		setController(controllerInfo);
+		
+		
 		switch (resultCode) {
 		case LoadDisk.ID_RESULT_LOADDISK:
     		loadDisk(LoadDisk.selectedDisk, true);
@@ -471,6 +589,10 @@ public class Beebdroid extends Activity implements AdListener
 				showHint("hint_space_to_start", R.string.hint_space_to_start, 10);
 			}
     		break;
+    		
+		case LoadDisk.ID_RESULT_SDCARDLOAD:			
+			loadSDdisk(LoadDisk.selectedSDcardDiskFilename, true);			
+			break;
     		
 		case LoadDisk.ID_RESULT_SAVE:
         	SavedGameInfo info;
@@ -492,8 +614,10 @@ public class Beebdroid extends Activity implements AdListener
 				FileInputStream fileIn = openFileInput(info.filename);
 				DataInputStream din = new DataInputStream(fileIn);
 				din.skip(info.offsetToMachineData);
-				int cbMachine = din.readInt();
-				int cb = fileIn.read(buffer);
+				//int cbMachine = 
+					din.readInt();
+				//int cb = 
+					fileIn.read(buffer);
 				bbcDeserialize(buffer);
 				din.close();				
 				Toast.makeText(this, "Restored", Toast.LENGTH_SHORT).show();
@@ -503,18 +627,63 @@ public class Beebdroid extends Activity implements AdListener
 			}
 			SavedGameInfo.current = info;
 			break;
-			
 		}
-
     }
+
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
+    public static String keyConfigFilename = ""; // passed to EditGameKeyActivity
+    
+    private void loadSDdisk(String filename, boolean bootIt)
+    {
+    	keyConfigFilename = filename;
+    	String fullPath = Environment.getExternalStorageDirectory().getPath() + "/Beebdroid/disks/" + filename;
+    	Toast.makeText(Beebdroid.this, "Load SD [" + fullPath + "]", Toast.LENGTH_SHORT).show();
+		Utils.writeLog("loadSDdisk filename[" + fullPath + "]");
+		diskImage = loadFile(new File(fullPath));
+		SDimageLoaded = true;
+		bbcBreak(0);
+		bbcLoadDisc(diskImage, 1);
+		keyboardTextWait = 20;
+		doFakeKeys("*EXEC !BOOT");
+//		if (!TextUtils.isEmpty(diskInfo.bootCmd)) {
+//			if (bootIt) {
+//				bbcBreak(0);
+//			}
+//    		bbcLoadDisc(diskImage, 0);
+//			keyboardTextWait = 20;
+//			doFakeKeys(diskInfo.bootCmd);
+//		}
+//		else {
+//			bbcLoadDisc(diskImage, (bootIt && TextUtils.isEmpty(diskInfo.bootCmd)) ? 1 : 0);
+//		}
+		// Set the right controller for the disk
+		//ControllerInfo controllerInfo = Controllers.controllersForKnownDisks.get(diskInfo.key);
+
+		controllerInfoDiskKeyName = filename;
+		ControllerInfo controllerInfo = Controllers.getControllerInfo(controllerInfoDiskKeyName);
+		//if (controllerInfo == null) controllerInfo = Controllers.DEFAULT_CONTROLLER;
+		setController(controllerInfo);
+		
+		// Show the controller overlay rather than the keyboard
+		showKeyboard(2);
+    }
+    
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
+    
     private void loadDisk(DiskInfo diskInfo, boolean bootIt) {
 		this.diskInfo = diskInfo;
-
+		keyConfigFilename = diskInfo.key;
+		Utils.writeLog("Beebdroid.loadDisk key[" + diskInfo.key + "] diskUrl[" + diskInfo.diskUrl + "]");
 		Analytics.trackEvent(getApplicationContext(), "Load disk", "" + diskInfo.key, "" + diskInfo.title, 0);
-		
 		diskImage = loadFile(new File(getFilesDir(), diskInfo.key));
-	
-		
 		// Load the disc and do the disc-start stuff
 		if (!TextUtils.isEmpty(diskInfo.bootCmd)) {
 			if (bootIt) {
@@ -522,103 +691,118 @@ public class Beebdroid extends Activity implements AdListener
 			}
     		bbcLoadDisc(diskImage, 0);
 			keyboardTextWait = 20;
+			
+			
+			Utils.writeLog("bootCmd[" + diskInfo.bootCmd + "]");
+			
 			doFakeKeys(diskInfo.bootCmd);
 		}
 		else {
 			bbcLoadDisc(diskImage, (bootIt && TextUtils.isEmpty(diskInfo.bootCmd)) ? 1 : 0);
 		}
-		
 		// Set the right controller for the disk
-		ControllerInfo controllerInfo = Controllers.controllersForKnownDisks.get(diskInfo.key);
-		if (controllerInfo == null) {
-			controllerInfo = Controllers.DEFAULT_CONTROLLER;
-		}
+//		ControllerInfo controllerInfo = Controllers.controllersForKnownDisks.get(diskInfo.key);
+//		if (controllerInfo == null) {
+//			controllerInfo = Controllers.DEFAULT_CONTROLLER;
+//		}
+		//Utils.writeLog("Beebdroid.loadDisk controller[" + controllerInfo.androidKeycode + "]");
+		//setController(controllerInfo);
+
+		
+		controllerInfoDiskKeyName = diskInfo.key;
+		ControllerInfo controllerInfo = Controllers.getControllerInfo(controllerInfoDiskKeyName);
+		//if (controllerInfo == null) controllerInfo = Controllers.DEFAULT_CONTROLLER;
 		setController(controllerInfo);
 		
 		// Show the controller overlay rather than the keyboard
-		showKeyboard(false);
-		
+		showKeyboard(2);
     }
+    
+    
+    private static String controllerInfoDiskKeyName = "";
     
     private void setController(ControllerInfo controllerInfo) {
     	currentController = controllerInfo;
    		controller.setController(controllerInfo);
-   		setTriggers(controllerInfo);
+   		//setTriggers(controllerInfo);
     }
 
-    public void showKeyboard(boolean show) {
-    	Utils.setVisible(this, R.id.keyboard, show);
-    	Utils.setVisible(this, R.id.controller, !show);
+    public void showKeyboard(int show) {
+    	    	
+    	Utils.setVisible(this, R.id.keyboard, show == 1 ? true : false);
+    	Utils.setVisible(this, R.id.controller, show == 2 ? true : false);
+    	
 		final ImageView btnInput = (ImageView)findViewById(R.id.btnInput);
 		if (btnInput != null) {
-			btnInput.setImageResource(show?(isXperiaPlay? R.drawable.keyboard_cancel : R.drawable.controller) : R.drawable.keyboard);
+			btnInput.setImageResource(R.drawable.keyboard);
+			//btnInput.setImageResource(show?(isXperiaPlay? R.drawable.keyboard_cancel : R.drawable.controller) : R.drawable.keyboard);
 		}
-		keyboardShowing = show;		
+				
+		keyboardShowing = show;			
     }
+    
     boolean shiftDown;
-    
-    
-
-    private int lookup(int keycode) {
-    	switch (keycode) {
-    	//case KeyEvent.KEYCODE_SHIFT_LEFT: return 0x00;
-    	//case KeyEvent.KEYCODE_SHIFT_RIGHT: return 0x00;
-    	case KeyEvent.KEYCODE_0: return shiftDown?0x126:0x27;
-    	case KeyEvent.KEYCODE_1: return 0x30;
-    	case KeyEvent.KEYCODE_2: return 0x31;
-    	case KeyEvent.KEYCODE_3: return 0x11;
-    	case KeyEvent.KEYCODE_4: return 0x12;
-    	case KeyEvent.KEYCODE_5: return 0x13;
-    	case KeyEvent.KEYCODE_6: return 0x34;
-    	case KeyEvent.KEYCODE_7: return shiftDown?0x134:0x24;
-    	case KeyEvent.KEYCODE_8: return 0x15;
-    	case KeyEvent.KEYCODE_9: return shiftDown?0x115:0x26;
-    	case KeyEvent.KEYCODE_A: return 0x41;
-    	case KeyEvent.KEYCODE_B: return 0x64;
-    	case KeyEvent.KEYCODE_C: return 0x52;
-    	case KeyEvent.KEYCODE_D: return 0x32;
-    	case KeyEvent.KEYCODE_E: return 0x22;
-    	case KeyEvent.KEYCODE_F: return 0x43;
-    	case KeyEvent.KEYCODE_G: return 0x53;
-    	case KeyEvent.KEYCODE_H: return 0x54;
-    	case KeyEvent.KEYCODE_I: return 0x25;
-    	case KeyEvent.KEYCODE_J: return 0x45;
-    	case KeyEvent.KEYCODE_K: return 0x46;
-    	case KeyEvent.KEYCODE_L: return 0x56;
-    	case KeyEvent.KEYCODE_M: return 0x65;
-    	case KeyEvent.KEYCODE_N: return 0x55;
-    	case KeyEvent.KEYCODE_O: return 0x36;
-    	case KeyEvent.KEYCODE_P: return 0x37;
-    	case KeyEvent.KEYCODE_Q: return 0x10;
-    	case KeyEvent.KEYCODE_R: return 0x33;
-    	case KeyEvent.KEYCODE_S: return 0x51;
-    	case KeyEvent.KEYCODE_T: return 0x23;
-    	case KeyEvent.KEYCODE_U: return 0x35;
-    	case KeyEvent.KEYCODE_V: return 0x63;
-    	case KeyEvent.KEYCODE_W: return 0x21;
-    	case KeyEvent.KEYCODE_X: return 0x42;
-    	case KeyEvent.KEYCODE_Y: return 0x44;
-    	case KeyEvent.KEYCODE_Z: return 0x61;
-    	case KeyEvent.KEYCODE_SPACE: return 0x62;
-    	case KeyEvent.KEYCODE_ENTER: return 0x49;
-    	case KeyEvent.KEYCODE_DEL: return 0x59;
-    	case KeyEvent.KEYCODE_APOSTROPHE: return shiftDown?0x31:0x124;
-    	case KeyEvent.KEYCODE_POUND: return 0x111; // '#' is Shift+3
-    	case KeyEvent.KEYCODE_MINUS: return shiftDown?0x238: 0x17;
-    	case KeyEvent.KEYCODE_EQUALS: return 0x117;
-    	case KeyEvent.KEYCODE_AT: return 0x47;
-    	case KeyEvent.KEYCODE_STAR: return 0x148;
-    	case KeyEvent.KEYCODE_PERIOD: return shiftDown?0x248:0x67;
-    	case KeyEvent.KEYCODE_SEMICOLON: return 0x57;
-    	case KeyEvent.KEYCODE_SLASH: return 0x68;
-    	case KeyEvent.KEYCODE_PLUS: return 0x157;
-    	case KeyEvent.KEYCODE_COMMA: return 0x66;
-    	//case KeyEvent.KEYCODE_GRAVE: return 0x??;
-    	//case KeyEvent.KEYCODE_LEFT_BRACKET: return 0x??;
-    	//case KeyEvent.KEYCODE_RIGHT_BRACKET: return 0x??;
-    	}
-    	return 0xaa;
-    }
+//    
+//    private int lookup(int keycode) {
+//    	switch (keycode) {
+//    	//case KeyEvent.KEYCODE_SHIFT_LEFT: return 0x00;
+//    	//case KeyEvent.KEYCODE_SHIFT_RIGHT: return 0x00;
+//    	case KeyEvent.KEYCODE_0: return shiftDown?0x126:0x27;
+//    	case KeyEvent.KEYCODE_1: return 0x30;
+//    	case KeyEvent.KEYCODE_2: return 0x31;
+//    	case KeyEvent.KEYCODE_3: return 0x11;
+//    	case KeyEvent.KEYCODE_4: return 0x12;
+//    	case KeyEvent.KEYCODE_5: return 0x13;
+//    	case KeyEvent.KEYCODE_6: return 0x34;
+//    	case KeyEvent.KEYCODE_7: return shiftDown?0x134:0x24;
+//    	case KeyEvent.KEYCODE_8: return 0x15;
+//    	case KeyEvent.KEYCODE_9: return shiftDown?0x115:0x26;
+//    	case KeyEvent.KEYCODE_A: return 0x41;
+//    	case KeyEvent.KEYCODE_B: return 0x64;
+//    	case KeyEvent.KEYCODE_C: return 0x52;
+//    	case KeyEvent.KEYCODE_D: return 0x32;
+//    	case KeyEvent.KEYCODE_E: return 0x22;
+//    	case KeyEvent.KEYCODE_F: return 0x43;
+//    	case KeyEvent.KEYCODE_G: return 0x53;
+//    	case KeyEvent.KEYCODE_H: return 0x54;
+//    	case KeyEvent.KEYCODE_I: return 0x25;
+//    	case KeyEvent.KEYCODE_J: return 0x45;
+//    	case KeyEvent.KEYCODE_K: return 0x46;
+//    	case KeyEvent.KEYCODE_L: return 0x56;
+//    	case KeyEvent.KEYCODE_M: return 0x65;
+//    	case KeyEvent.KEYCODE_N: return 0x55;
+//    	case KeyEvent.KEYCODE_O: return 0x36;
+//    	case KeyEvent.KEYCODE_P: return 0x37;
+//    	case KeyEvent.KEYCODE_Q: return 0x10;
+//    	case KeyEvent.KEYCODE_R: return 0x33;
+//    	case KeyEvent.KEYCODE_S: return 0x51;
+//    	case KeyEvent.KEYCODE_T: return 0x23;
+//    	case KeyEvent.KEYCODE_U: return 0x35;
+//    	case KeyEvent.KEYCODE_V: return 0x63;
+//    	case KeyEvent.KEYCODE_W: return 0x21;
+//    	case KeyEvent.KEYCODE_X: return 0x42;
+//    	case KeyEvent.KEYCODE_Y: return 0x44;
+//    	case KeyEvent.KEYCODE_Z: return 0x61;
+//    	case KeyEvent.KEYCODE_SPACE: return 0x62;
+//    	case KeyEvent.KEYCODE_ENTER: return 0x49;
+//    	case KeyEvent.KEYCODE_DEL: return 0x59;
+//    	case KeyEvent.KEYCODE_APOSTROPHE: return shiftDown?0x31:0x124;
+//    	case KeyEvent.KEYCODE_POUND: return 0x111; // '#' is Shift+3
+//    	case KeyEvent.KEYCODE_MINUS: return shiftDown?0x238: 0x17;
+//    	case KeyEvent.KEYCODE_EQUALS: return 0x117;
+//    	case KeyEvent.KEYCODE_AT: return 0x47;
+//    	case KeyEvent.KEYCODE_STAR: return 0x148;
+//    	case KeyEvent.KEYCODE_PERIOD: return shiftDown?0x248:0x67;
+//    	case KeyEvent.KEYCODE_SEMICOLON: return 0x57;
+//    	case KeyEvent.KEYCODE_SLASH: return 0x68;
+//    	case KeyEvent.KEYCODE_PLUS: return 0x157;
+//    	case KeyEvent.KEYCODE_COMMA: return 0x66;
+//    	//case KeyEvent.KEYCODE_GRAVE: return 0x??;
+//    	//case KeyEvent.KEYCODE_LEFT_BRACKET: return 0x??;
+//    	//case KeyEvent.KEYCODE_RIGHT_BRACKET: return 0x??;
+//    	}
+//    	return 0xaa;
+//    }
 
     //0x218=up arrow  0x118=%
     //0x278= 1/2      0x178=dbl vert pipe
@@ -630,7 +814,7 @@ public class Beebdroid extends Activity implements AdListener
 	public static float dp(float d) {
 		return  (d * DPI_MULT + 0.5f);
 	}
-	public static boolean useDpad = false;
+	//public static boolean useDpad = false;
 	
 	public static class BeebView extends SurfaceView implements SurfaceHolder.Callback {
 		
@@ -640,13 +824,12 @@ public class Beebdroid extends Activity implements AdListener
         static final float ASPECT = ((float)H/(float)W);
         
         EGL10 egl;
-        int textureId; //Bitmap screen;
-        
+        int textureId; //Bitmap screen;        
     	int screenwidth;
     	int screenheight;
 		
-	    private Rect rcSrc;
-	    private Rect rcDst;
+	    //private Rect rcSrc;
+	    //private Rect rcDst;
 	    //private Paint paint;
 	    private GL10 gl;
 	    private EGLConfig config;
@@ -659,18 +842,15 @@ public class Beebdroid extends Activity implements AdListener
 	        super(context, attrs);	        
 	        getHolder().addCallback(this);
 	        //screen = Bitmap.createBitmap(W, H, Bitmap.Config.RGB_565);
-	    	rcSrc = new Rect(0,0,W, H/2);
-
-	    }
-	  
+	    	//rcSrc = new Rect(0,0,W, H/2);
+	    }	  
 	    private void cleanupgl() {
             // Unbind and destroy the old EGL surface, if there is one.
 	        if (surface != null) {
                 egl.eglMakeCurrent(display, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
                 egl.eglDestroySurface(display, surface);
                 surface = null;
-            }
-	    	
+            }	    	
 	    }
 	    public void initgl() {
 	    	cleanupgl();
@@ -688,14 +868,14 @@ public class Beebdroid extends Activity implements AdListener
 	        gl = (GL10)ctxt.getGL();
 	    	
 	    }
-	    @Override
-	    public void onMeasure(int ws, int hs) {
-	    	super.onMeasure(ws, hs);
-	    	int w = getMeasuredWidth();
-	    	int h = getMeasuredHeight();
-	    	rcDst = new Rect(0,0,w, h);//(int)(w * ASPECT));
-	    	Log.d(TAG, "beebView is " + rcDst.width() + "x" + rcDst.height());
-	    }
+//	    @Override
+//	    public void onMeasure(int ws, int hs) {
+//	    	super.onMeasure(ws, hs);
+////	    	int w = getMeasuredWidth();
+////	    	int h = getMeasuredHeight();
+//	    	//rcDst = new Rect(0,0,w, h);//(int)(w * ASPECT));
+//	    	//Log.d(TAG, "beebView is " + rcDst.width() + "x" + rcDst.height());
+//	    }
 
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
@@ -724,19 +904,15 @@ public class Beebdroid extends Activity implements AdListener
 	        	throw new RuntimeException("No matching EGL config");
 	        }
 	        config = configs[0];
-	         */
-	        
+	         */	        
 	        config = getEglConfig565(egl, display);
-
-	        ctxt = egl.eglCreateContext(display, config, EGL10.EGL_NO_CONTEXT, null);
-
-	        
+	        ctxt = egl.eglCreateContext(display, config, EGL10.EGL_NO_CONTEXT, null);	        
 		}
 
 		@Override
 		public void surfaceChanged(SurfaceHolder holder, int format, int width,	int height) {
 			Log.d(TAG, "surfaceChanged");
-			this.width = width;
+			this.width = width; // initialise width and height
 			this.height = height;
 			gl = null;
 		}
@@ -771,27 +947,23 @@ public class Beebdroid extends Activity implements AdListener
 
 	}
 	public void videoCallback() {
-		fps++;
-		
-		if (use25fps && (1==(fps&1))) {
-			
+		fps++;		
+		if (use25fps && (1==(fps&1))) 
+		{			
 		}
-		else {
-	
+		else {	
 			// Swap buffers!
 			if (beebView.egl != null) {
 				beebView.egl.eglSwapBuffers(beebView.display, beebView.surface);
 			}
-		}
-		
+		}		
 		// Update status text once per second
 		if (System.currentTimeMillis() - time_fps >=1000) {
 			tvFps.setText("FPS: " + fps);
 			fps = 0;
 			skipped = 0;
 			time_fps = System.currentTimeMillis();
-		}
-		
+		}		
 	}
 	
 
@@ -821,7 +993,7 @@ public class Beebdroid extends Activity implements AdListener
 	private static final int ID_LOADDISK = 2;
 	//private static final int ID_CONTROLLERS = 2;
 	private static final int ID_ABOUT = 3;
-	private static final int ID_SAVEDGAMES = 4;
+	//private static final int ID_SAVEDGAMES = 4;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -834,7 +1006,8 @@ public class Beebdroid extends Activity implements AdListener
 	public boolean onOptionsItemSelected (MenuItem item) {
 		switch (item.getItemId()) {
 		case ID_SWITCHKEYBOARD:
-			showKeyboard(!keyboardShowing);
+			keyboardShowing = keyboardShowing == 2 ? 0 : keyboardShowing + 1; // DCH 0 to 1, 1 to 2, 2 to 0
+			showKeyboard(keyboardShowing);
 			hintActioned("hint_switch_keyboards");
 			return true;
 		case ID_LOADDISK:
@@ -845,7 +1018,6 @@ public class Beebdroid extends Activity implements AdListener
 			startActivity(new Intent(Beebdroid.this, AboutActivity.class));
 			return true;
 		}
-
 		return false;
 	}
 
@@ -856,34 +1028,44 @@ public class Beebdroid extends Activity implements AdListener
 	}
 
 	boolean playing;
-	int heh;
-	
+	//int heh;	
 	
 	long lastAudioCallbackTime;
 	
+	// TODO try removing this for speed
+	
 	public void audioCallback(int pos, int cb) {
-		String s = "";
-		for (int i=0 ; i<16 ; i++) {
-			s += Integer.toHexString(audiobuff[i]);
-			s += " ";
-		}
-		//Log.d(TAG, "audiocb " + s);
-		audio.write(audiobuff, pos, cb);
-		//audio.flush();
-		
+// this removed		
+//		String s = "";
+//		for (int i=0 ; i<16 ; i++) {
+//			s += Integer.toHexString(audiobuff[i]);
+//			s += " ";
+//		}
+// this replaces above then realise it isnt used duh		
+//		StringBuilder sb = new StringBuilder();
+//		for (int i=0 ; i < 16 ; i++) 
+//		{
+//			sb.append(Integer.toHexString(audiobuff[i]));
+//			sb.append(" ");
+//		}
 
-		if (!playing) {
-			audio.play();
-			playing = true;
+		if (audioEnabled)
+		{
+			//Log.d(TAG, "audiocb " + s);
+			audio.write(audiobuff, pos, cb);
+			//audio.flush();
+			if (!playing) {
+				audio.play();
+				playing = true;
+			}
 		}
+		
 	}
 	
 	
 	public void onSaveClicked(View v) {
 		startDisksActivity((diskInfo==null)?0:2); // i.e. start on 'Installed' tab if no disk loaded, 'Saved' tab if a disk *is* loaded 
 	}
-	
-	
 	
 	
 	/*
@@ -989,16 +1171,79 @@ public class Beebdroid extends Activity implements AdListener
 	// 
 	// TRIGGERS
 	//
-	public void setTriggers(ControllerInfo controllerInfo) {
-		short[] pc_triggers = {};
-		if (controllerInfo.triggers != null) {
-			pc_triggers = new short[controllerInfo.triggers.size()];
-			for (int i=0 ; i<controllerInfo.triggers.size() ; i++) {
-				pc_triggers[i] = controllerInfo.triggers.get(i).pc_trigger;
-			}
-		}
-		bbcSetTriggers(pc_triggers);
-		last_trigger = 0;
-	}
+//	public void setTriggers(ControllerInfo controllerInfo) {
+//		short[] pc_triggers = {};
+//		if (controllerInfo != null && controllerInfo.triggers != null) {
+//			pc_triggers = new short[controllerInfo.triggers.size()];
+//			for (int i=0 ; i<controllerInfo.triggers.size() ; i++) {
+//				pc_triggers[i] = controllerInfo.triggers.get(i).pc_trigger;
+//			}
+//		}
+//		bbcSetTriggers(pc_triggers);
+//		last_trigger = 0;
+//	}
 	
+    
+    
+    //
+    // onXperiaKey
+    //
+//    private boolean onXperiaKey(int keycode, KeyEvent event, int isDown) {
+//    	if (keycode==KeyEvent.KEYCODE_BACK && !event.isAltPressed()) return false;
+//    	ControllerInfo.KeyInfo info = controller.controllerInfo.keyinfosMappedByAndroidKeycode.get(keycode);
+//    	if (info != null) {
+//    		bbcKeyEvent(info.scancode, shiftDown?1:0, isDown);
+//    		return true;
+//    	}
+//		return false;
+//	}
+	
+	// =======================================================================
+	// === 
+	// === Aquire and release a wakelock 
+	// === 
+	// === http://code.google.com/p/android/issues/detail?id=11622  WakeLock under-locked error
+	// === http://stackoverflow.com/questions/5920798/wakelock-finalized-while-still-held
+	// === 
+	// =======================================================================
+	private static final String LOCK_NAME_STATIC = "com.littlefluffytoys.beebdroid.wakelock";
+	PowerManager pm = null; 
+	PowerManager.WakeLock backgroundProcessWakeLock = null; 
+	PowerManager.WakeLock fullScreenWakeLock = null;
+	// =======================================================================
+	private void WakeLockAcquire()
+	{
+		pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		String log = "acquireWakeLock : No operation";
+		if (backgroundProcessWakeLock == null) 
+		{
+			log = "acquireWakeLock : Create";
+			backgroundProcessWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, LOCK_NAME_STATIC);
+		}
+		if (backgroundProcessWakeLock != null && backgroundProcessWakeLock.isHeld() == false)
+		{
+			log = "acquireWakeLock : Acquire";
+			backgroundProcessWakeLock.acquire();
+		}
+		Log.i("Beebdroid.WakeLock", log);
+	}
+	// =======================================================================
+	private void WakeLockRelease()
+	{
+		String log = "releaseWakeLock : No operation";
+		if (backgroundProcessWakeLock != null && backgroundProcessWakeLock.isHeld() == true)
+		{
+			log = "releaseWakeLock : Release";
+			backgroundProcessWakeLock.release();
+			backgroundProcessWakeLock = null;
+		}
+		Log.i("Beebdroid.WakeLock", log);
+	}	
+	// =======================================================================
+	// === 
+	// === 
+	// === 
+	// =======================================================================
 }
+
+

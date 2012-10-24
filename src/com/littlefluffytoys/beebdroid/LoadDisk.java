@@ -3,7 +3,8 @@ package com.littlefluffytoys.beebdroid;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.lang.reflect.Field;
+//import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +21,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+//import android.os.Environment;
 import android.text.TextUtils;
-import android.view.ContextMenu;
-import android.view.MenuItem;
+import android.util.Log;
+//import android.view.ContextMenu;
+//import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -40,14 +43,17 @@ import android.widget.ViewFlipper;
 
 
 public class LoadDisk extends Activity implements OnTabChangeListener {
-	private static final String TAG="LoadDisk";
+	//private static final String TAG="LoadDisk";
 	
 	private static final String SERVER_ROOT = "http://www.stairwaytohell.com/";
 	//private static final String SERVER_ROOT = "http://www.littlefluffytoys.com/beebdroid/";
-	private static final int ID_DELETE = 1;
+	//private static final int ID_DELETE = 1;
 	public static final int ID_RESULT_LOADDISK = 101;
 	public static final int ID_RESULT_SAVE = 102;
 	public static final int ID_RESULT_RESTORE = 103;
+	public static final int ID_RESULT_SDCARDLOAD = 104;
+	public final static String EXTRA_BBC_KEY_CODE = "com.littlefluffytoys.beebdroid.EXTRA_BBC_KEY_CODE";
+	public final static String EXTRA_GAME_FILENAME = "com.littlefluffytoys.beebdroid.EXTRA_GAME_FILENAME";
 	
 	protected TabHost mTabHost;
 	protected ViewFlipper viewFlipper;
@@ -59,12 +65,56 @@ public class LoadDisk extends Activity implements OnTabChangeListener {
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loaddisk);
+
+        
+        // Load in a list of the disks in a specific directory
+                
+        try
+        {
+            sdCardDisks = new ArrayList<SDcardDisk>();      
+            String fullPath = Utils.SDrootPathSlash + "disks/";
+            File root = new File(fullPath);
+            File[] files = root.listFiles();
+            //fileList.clear();
+            for (File file : files)
+            {
+            	Log.i("Beebdroid", "LoadDisk found [" + file.getName() + "]");
+            	sdCardDisks.add(new SDcardDisk(file.getName()));
+            }
+        }
+    	catch (Exception e)
+		{
+			Log.e("Utils", e.toString());
+		}
+        
+        
+		try
+		{
+			configKeys = new ArrayList<ConfigKey>();
+			Field[] fields = BeebKeys.class.getDeclaredFields();
+			for(Field f : fields) 
+			{
+				ConfigKey ck = new ConfigKey();
+				ck.label = f.getName();
+				configKeys.add(ck);
+			}
+		} 
+		catch (Exception e)
+		{
+			Log.e("Utils", e.toString());
+		}
+    	
+    	
+        
+        
         mTabHost = (TabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup();
         mTabHost.setOnTabChangedListener(this);
         setupTab("Installed", installedAdapter, R.layout.listview, onInstalledItemClickListener);
         setupTab("Online", onlineAdapter, R.layout.listview_online, onOnlineItemClickListener);
         setupTab("Saved", savedAdapter, R.layout.listview, onSaveItemClickListener);
+        setupTab("SD Card", sdCardAdapter, R.layout.listview, onSdCardItemClickListener);
+        setupTab("Setup Keys", configKeysAdapter, R.layout.listview, onConfigKeysItemClickListener);
         int tab = getIntent().getIntExtra("startTab", 0);
         mTabHost.setCurrentTab(tab);
         if (SavedGameInfo.savedGames == null) {
@@ -73,6 +123,7 @@ public class LoadDisk extends Activity implements OnTabChangeListener {
      
 	}
 
+	
 	
 	private void setupTab(final String tag, final BaseAdapter adapter, final int layoutId, final OnItemClickListener onItemClickListener) {
 	    View view = getLayoutInflater().inflate(R.layout.tabs_bg, null);
@@ -95,10 +146,79 @@ public class LoadDisk extends Activity implements OnTabChangeListener {
 	    });
 	    mTabHost.addTab(spec);
 	}
+
+	
+	
+	List<ConfigKey> configKeys = new ArrayList<ConfigKey>();
+	BaseAdapter configKeysAdapter = new BaseAdapter()
+	{
+		@Override
+		public int getCount()
+		{
+			return configKeys.size();
+		}
+		@Override
+		public Object getItem(int position)
+		{
+			return null;
+		}
+		@Override
+		public long getItemId(int position)
+		{
+			return position;
+		}
+		@Override
+		public View getView(int position, View view, ViewGroup parent)
+		{
+			ConfigKey configKeyInfo = configKeys.get(position);
+			if (view == null) {
+				view = getLayoutInflater().inflate(R.layout.listitem_diskinfo, null);
+			}
+			view.setTag(configKeyInfo.label);
+			Utils.setText(view, R.id.title, configKeyInfo.label);
+			return view;
+		}
+	};
+	
+	
+	
+	
+	List<SDcardDisk> sdCardDisks = new ArrayList<SDcardDisk>();
+	BaseAdapter sdCardAdapter = new BaseAdapter()
+	{
+		@Override
+		public int getCount()
+		{
+			return sdCardDisks.size();
+		}
+		@Override
+		public Object getItem(int position)
+		{
+			return null;
+		}
+		@Override
+		public long getItemId(int position)
+		{
+			return position;
+		}
+		@Override
+		public View getView(int position, View view, ViewGroup parent)
+		{
+			SDcardDisk sdCardInfo = sdCardDisks.get(position);
+			if (view == null) {
+				view = getLayoutInflater().inflate(R.layout.listitem_diskinfo, null);
+			}
+			view.setTag(sdCardInfo.filename);
+			Utils.setText(view, R.id.title, sdCardInfo.filename);
+			return view;
+		}
+	};
+	
+	
 	
 
 	public static DiskInfo selectedDisk;
-	
+	//public static SDcardDisk selectedSDcardDisk;
 	/*
 	 * INSTALLED DISKS ADAPTER
 	 */
@@ -133,6 +253,10 @@ public class LoadDisk extends Activity implements OnTabChangeListener {
 		}
 		
 	};
+	
+	
+	
+	
 
 	/*
 	 * ONLINE ADAPTER
@@ -248,6 +372,39 @@ public class LoadDisk extends Activity implements OnTabChangeListener {
 			finish();		
 		}
 	};
+	
+	
+	OnItemClickListener onConfigKeysItemClickListener = new OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View view, int position, long id)
+		{
+			String bbcKeyCode = (String) view.getTag();
+			Toast.makeText(LoadDisk.this, "Edit key [" + bbcKeyCode + "]", Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(LoadDisk.this, EditGameKeyActivity.class);
+			intent.putExtra(EXTRA_BBC_KEY_CODE, bbcKeyCode);
+			intent.putExtra(EXTRA_GAME_FILENAME, Beebdroid.keyConfigFilename);
+			startActivity(intent);
+		}
+	};
+	
+	
+	
+	public static String selectedSDcardDiskFilename = "";
+	OnItemClickListener onSdCardItemClickListener = new OnItemClickListener()
+	{
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View view, int position, long id)
+		{
+			// TODO Auto-generated method stub
+			setResult(ID_RESULT_SDCARDLOAD);
+			//selectedSDcardDisk = (SDcardDisk)view.getTag();
+			selectedSDcardDiskFilename = (String) view.getTag();
+			//Toast.makeText(LoadDisk.this, "Load SD [" + selectedSDcardDiskFilename + "]", Toast.LENGTH_SHORT).show();
+			finish();			
+		}
+	};
+	
+	
 	OnItemClickListener onOnlineItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

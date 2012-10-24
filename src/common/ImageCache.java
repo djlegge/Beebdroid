@@ -27,7 +27,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
+//import android.graphics.Matrix;
 import android.net.http.AndroidHttpClient;
 import android.os.Handler;
 import android.util.Log;
@@ -389,7 +389,7 @@ public class ImageCache {
     //
     private class Job implements Runnable {
         String url;
-        boolean useExifOrientation;
+        //boolean useExifOrientation;
         ImageView imageView;
         //WeakReference<ImageView> imageViewRef;
         //List<WeakReference<ImageView>> imageViewRefList;
@@ -399,7 +399,7 @@ public class ImageCache {
         	this.imageView = imageView;
             //this.imageViewRef = new WeakReference<ImageView>(imageView);
             this.url = url;
-            this.useExifOrientation = useExifOrientation;
+            //this.useExifOrientation = useExifOrientation;
         }
         /*public void addImageView(ImageView imageView) {
         	if (imageViewRefList == null) {

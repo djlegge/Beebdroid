@@ -2,7 +2,7 @@ package com.littlefluffytoys.beebdroid;
 
 import java.util.ArrayList;
 
-import com.littlefluffytoys.beebdroid.TouchpadsView.Key;
+//import com.littlefluffytoys.beebdroid.TouchpadsView.Key;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 public class Keyboard extends TouchpadsView {
 
 	// The height of a row of keys
-	private static final int ROWHEIGHT_SMALL = 36;
+	//private static final int ROWHEIGHT_SMALL = 36;
 
 	// Shift modes
 	public static final int SHIFTMODE_NORMAL = 0;
@@ -142,6 +142,7 @@ public class Keyboard extends TouchpadsView {
 		allkeys.add(pad);
 		return pad;
 	}
+	
 	public Key add(String label, String labelTop, float weight, int scancode) {
 		return add(label, labelTop, weight, scancode, 0);
 	}
@@ -164,15 +165,12 @@ public class Keyboard extends TouchpadsView {
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		super.onLayout(changed, l, t, r, b); 
-
-		float rowheight = (b-t)/6f;//ROWHEIGHT_SMALL * (getContext().getResources().getDisplayMetrics().heightPixels / 480f);
-		
+		float rowheight = (b-t)/6f;//ROWHEIGHT_SMALL * (getContext().getResources().getDisplayMetrics().heightPixels / 480f);		
 		float y = 0;
 		for (KeyRow row : rows) {
 			row.layout(r-l, y, y+rowheight+Beebdroid.dp(2));
 			y += rowheight ;//- Beebdroid.dp(2);
-		}
-	
+		}	
 		b -=t;
 		t = 0;
 		int o = (int)Beebdroid.dp(8);
@@ -188,8 +186,6 @@ public class Keyboard extends TouchpadsView {
 		led.draw(canvas);
 	}
 	
-	
-
 	//
 	// KeyRow
 	//

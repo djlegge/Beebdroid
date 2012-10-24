@@ -4,7 +4,7 @@
  */
 package com.littlefluffytoys.beebdroid;
 
-import java.util.Locale;
+//import java.util.Locale;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,8 +12,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 public class UserPrefs extends PreferenceActivity {
-
-	private static final String TAG="UserPrefs";
 	
 	public static final String PREFKEY_ABOUT_CHECKBOX = "AboutCheckbox";
 	public static final String PREFKEY_GRANDFATHERED_IN = "GrandfatheredIn";
@@ -27,6 +25,7 @@ public class UserPrefs extends PreferenceActivity {
 	public static int getAboutScreenCheckbox(Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context).getInt(PREFKEY_ABOUT_CHECKBOX, ABOUTSCREEN_FIRST_EVER);
 	}
+	
 	public static void setAboutScreenCheckbox(Context context, int value) {
 		aboutScreenCheckbox = value;
 		putInt(context, UserPrefs.PREFKEY_ABOUT_CHECKBOX, aboutScreenCheckbox);
@@ -53,13 +52,10 @@ public class UserPrefs extends PreferenceActivity {
 		int i = safeGetPrefsInt(prefs, key, (int)(100 * defaultVal));
 		return ((float)i)/100f;
 	}
-
 	static void refresh(Context context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);		
-		aboutScreenCheckbox = prefs.getInt(PREFKEY_ABOUT_CHECKBOX, ABOUTSCREEN_FIRST_EVER);
-		
+		aboutScreenCheckbox = prefs.getInt(PREFKEY_ABOUT_CHECKBOX, ABOUTSCREEN_FIRST_EVER);		
 	}
-
 	static int getInt(Context context, String key, int defaultVal) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);		
 	    int intValue = prefs.getInt(key, defaultVal);

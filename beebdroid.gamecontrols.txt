@@ -1,0 +1,77 @@
+imogen Left 	Z 		0 -1 1f 1f 			BBCKEY_Z 				KEYCODE_DPAD_LEFT
+imogen Right 	X 		1 -1 1f 1f 			BBCKEY_X 				KEYCODE_DPAD_RIGHT
+imogen Up 		: 		0 -1 1f 1f 			BBCKEY_COLON 			KEYCODE_DPAD_UP
+imogen Down 	/ 		-2 1 1f 1f 			BBCKEY_SLASH			KEYCODE_DPAD_DOWN
+imogen Fire 	Return 	-1 0 1f 2f 			BBCKEY_ENTER			KEYCODE_BUTTON_1
+imogen [] 		[] 		1 0 0.5f 0.5f 		BBCKEY_SPACE			KEYCODE_BUTTON_9
+imogen <- 		<- 		0 0 0.5f 0.5f 		BBCKEY_ARROW_LEFT 		KEYCODE_BUTTON_7
+imogen -> 		-> 		0.5f -0 0.5f 0.5f 	BBCKEY_ARROW_RIGHT 		KEYCODE_BUTTON_8
+
+Imogen-Superior.ssd 	Left 	Z 		0 -1 1f 1f 		BBCKEY_Z 				KEYCODE_DPAD_LEFT
+Imogen-Superior.ssd 	Right 	X 		1 -1 1f 1f 		BBCKEY_X 				KEYCODE_DPAD_RIGHT
+Imogen-Superior.ssd 	Up 		: 		0 -1 1f 1f 		BBCKEY_COLON 			KEYCODE_DPAD_UP
+Imogen-Superior.ssd 	Down 	/ 		-2 1 1f 1f 		BBCKEY_SLASH			KEYCODE_DPAD_DOWN
+Imogen-Superior.ssd 	Fire 	Return 	-1 0 1f 2f 		BBCKEY_ENTER			KEYCODE_BUTTON_1
+Imogen-Superior.ssd 	[] 		[] 		1 0 0.5f 0.5f 	BBCKEY_SPACE			KEYCODE_BUTTON_9
+Imogen-Superior.ssd 	<- 		<- 		0 0 0.5f 0.5f 	BBCKEY_ARROW_LEFT 		KEYCODE_BUTTON_7
+Imogen-Superior.ssd		-> 		-> 		0.5f -0 0.5f 0.5f 	BBCKEY_ARROW_RIGHT 		KEYCODE_BUTTON_8
+
+zalaga Left 	Z 		0 0 1f 1f 		BBCKEY_CAPS 			KEYCODE_DPAD_LEFT
+zalaga Right 	X 		0 0 1f 1f 		BBCKEY_CTRL 			KEYCODE_DPAD_RIGHT
+zalaga Fire 	Return 	-1 0 1f 1f 		BBCKEY_ENTER 			KEYCODE_BUTTON_1
+
+cylonattack.ssd 	Left 	< 		0 0 1f 1f 	BBCKEY_LESS_THAN 	KEYCODE_DPAD_LEFT
+cylonattack.ssd 	Right 	> 		0 0 1f 1f 	BBCKEY_MORE_THAN 	KEYCODE_DPAD_RIGHT
+cylonattack.ssd 	Up 		A 		0 0 1f 1f 	BBCKEY_A 			KEYCODE_DPAD_UP
+cylonattack.ssd 	Down 	Z 		0 0 1f 1f 	BBCKEY_Z 			KEYCODE_DPAD_DOWN
+cylonattack.ssd 	Fire 	Space 	0 0 1f 1f 	BBCKEY_SPACE 		KEYCODE_BUTTON_1
+
+Alien8.ssd		 	Left 	<- 		0 -1 1f 1f 		BBCKEY_ARROW_LEFT			KEYCODE_DPAD_LEFT
+Alien8.ssd		 	Right 	-> 		1 -1 1f 1f 		BBCKEY_ARROW_RIGHT			KEYCODE_DPAD_RIGHT
+Alien8.ssd		 	Move	Z 		0 -1 1f 1f 		BBCKEY_Z 					KEYCODE_BUTTON_1
+Alien8.ssd		 	Jump 	A	 	-1 0 1f 2f 		BBCKEY_A					KEYCODE_BUTTON_2
+Alien8.ssd		 	Take 	1	 	-1 0 1f 2f 		BBCKEY_1					KEYCODE_BUTTON_3
+
+Arkanoid.ssd
+CylonAttack.ssd
+EscapeFromMoonbaseAlpha.ssd
+CodenameDroid.ssd
+PalaceOfMagic.ssd
+Tempest.ssd
+Krakout.ssd
+MysteriousAdventure2-TimeMachine.ssd
+StairwayToHell.ssd
+Deathstar.ssd
+EaglesWing.ssd
+Sinistar.ssd
+Spellbinder.ssd
+StarDrifter.ssd
+Stranded-Superior.ssd
+Painter.ssd
+Firetrack-Superior.ssd
+Galaforce.ssd
+Imogen-Superior.ssd
+Maze-Superior.ssd
+Nightshade.ssd
+Snapper-Superior.ssd
+Zalaga-Superior.ssd
+
+
+//		
+//		controller_StrykersRun_Game.addKey("Left", "ArrowLeft", 0, 0, 1f, 1f, BBCKEY_ARROW_LEFT, KEYCODE_DPAD_LEFT);
+//		controller_StrykersRun_Game.addKey("Right", "ArrowRight", 0, 0, 1f, 1f, BBCKEY_ARROW_RIGHT, KEYCODE_DPAD_RIGHT);
+//		controller_StrykersRun_Game.addKey("Jump", "A",  -1,  0, 1f, 2f, BBCKEY_A, KEYCODE_BUTTON_1);
+//		controller_StrykersRun_Game.addKey("Fire", "Shift",  -1,  0, 1f, 2f, BBCKEY_SHIFT, KEYCODE_BUTTON_2);
+//		controller_StrykersRun_Game.addKey("Fly", "Ctrl",  -1,  0, 1f, 2f, BBCKEY_CTRL, KEYCODE_BUTTON_3);
+//		controller_StrykersRun_Game.addKey("Duck", "Z",  -1,  0, 1f, 2f, BBCKEY_Z, KEYCODE_BUTTON_8);
+//		controller_StrykersRun_Game.addKey("Nade", "Del",  -1,  0, 1f, 2f, BBCKEY_DELETE, KEYCODE_BUTTON_7);
+//		
+
+//		controller_Thrust_Game.addKey("Left","Caps",    0f,  -1, 1f, 1f,  BBCKEY_CAPS, KEYCODE_DPAD_LEFT);
+//		controller_Thrust_Game.addKey("Right","Ctrl",   1f,  -1, 1f, 1f,  BBCKEY_CTRL, KEYCODE_DPAD_RIGHT);
+//		controller_Thrust_Game.addKey("Thrust","Shift", -1f,  0, 1f, 2f,  BBCKEY_SHIFT, KEYCODE_BUTTON_1);
+//		controller_Thrust_Game.addKey("Fire","Return", -2f,  0, 1f, 1f,  BBCKEY_ENTER, KEYCODE_BUTTON_7);
+//		controller_Thrust_Game.addKey("Shield","", -2f,  1, 1f, 1f,  BBCKEY_SPACE, KEYCODE_BUTTON_8);
+
+
+

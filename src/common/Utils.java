@@ -4,18 +4,20 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+//import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
+//import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.zip.ZipEntry;
+//import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap; 
+//import java.util.List;
+//import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import junit.framework.Assert;
@@ -28,6 +30,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Typeface;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +39,35 @@ import android.widget.TextView;
 
 public class Utils {
 	
+	// === 
+	// === Root directory on the SD card that we'll put all our files in 
+	// === 
+	public static final String SDrootPathSlash = Environment.getExternalStorageDirectory().getPath() + "/Beebdroid/";
+		
+	// DCH log function, useful when we've got a joystick plugged into the USB port
+	public static void writeLog(String logStr)
+	{
+		try
+		{
+			if (logStr == null) logStr = "?NULL?";
+			Log.i("Utils", logStr);
+			// ===
+			//File sdCard = Environment.getExternalStorageDirectory();
+			File dir = new File(SDrootPathSlash + "logs");
+			dir.mkdirs();
+			// ===
+			String ymd = android.text.format.DateFormat.format("y-MM-d", new Date()).toString();
+			String hhmmss = android.text.format.DateFormat.format("kk:mm:ss", new Date()) + " ";
+			FileWriter out = new FileWriter(dir + "/beebdroid_" + ymd + ".txt", true);
+			out.write(hhmmss + logStr + "\r\n");
+			out.close();
+		} 
+		catch (Exception e)
+		{
+			Log.e("Utils", e.toString());
+		}
+	}	
+		
 	public static void setVisibility(Object object, int id, int visibility) {
 		View view = getView(object, id);
 		if (view != null) {
@@ -143,7 +175,6 @@ public class Utils {
 	    }
 	    return new String(outputStream.toByteArray());
 	}
-
 
 	//
 	// getCommaDelimitedIntArray
@@ -292,7 +323,8 @@ public class Utils {
 	
 	public static void unzip(File zipfile, File targetfile, boolean deleteZipAfterwards) throws IOException {
 		ZipInputStream input = new ZipInputStream(new FileInputStream(zipfile));
-		ZipEntry entry = input.getNextEntry(); 
+		//ZipEntry entry = 
+			input.getNextEntry(); 
 		OutputStream output = new BufferedOutputStream(new FileOutputStream(targetfile));
         int count;
         byte buffer[] = new byte[4096];

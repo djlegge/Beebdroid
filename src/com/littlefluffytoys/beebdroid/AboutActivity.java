@@ -1,7 +1,7 @@
 package com.littlefluffytoys.beebdroid;
 
 import android.app.Activity;
-import android.content.Intent;
+//import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +22,7 @@ public class AboutActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_about);		
 	}
+	
 	@Override
 	public void onStart() {
 		super.onStart();

@@ -1,9 +1,17 @@
 package com.littlefluffytoys.beebdroid;
 
-public class BeebKeys {
-	/*
-	 * BBC Model B Keyboard : taken from 	http://www.flickr.com/photos/39013214@N03/5660684665/sizes/o/in/photostream/
+import java.lang.reflect.Field;
+import android.util.Log;
+import android.view.KeyEvent;
 
+public class BeebKeys {
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================
+	/* BBC Model B Keyboard : taken from 	
+	 * // http://www.flickr.com/photos/39013214@N03/5660684665/sizes/o/in/photostream/
 	         0    1    2    3    4    5    6   7    8    9
 	         ----------------------------------------------
 	0x70     ESC  F1   F2   F3   F5   F6   F8   F9   \|  right
@@ -12,9 +20,157 @@ public class BeebKeys {
 	0x30     1    2    D    R    6    U    O    P    [(  up
 	0x40     CAP  A    X    F    Y    J    K    @    :*  RET
 	0x50     SLC  S    C    G    H    N    L    ;+   ])  DEL
-	0x60     TAB  Z    SPC  V    B    M    ,<   .>   /?  CPY
-	 */
-
+	0x60     TAB  Z    SPC  V    B    M    ,<   .>   /?  CPY  */
+	
+	
+////public static final int KEYCODE_DPAD_UP = 19;
+////public static final int KEYCODE_DPAD_DOWN = 20;
+////public static final int KEYCODE_DPAD_LEFT = 21;
+////public static final int KEYCODE_DPAD_RIGHT = 22;
+////public static final int KEYCODE_BUTTON_1 = 188;  A
+////public static final int KEYCODE_BUTTON_2 = 189;  B
+////public static final int KEYCODE_BUTTON_3 = 190;  C
+////public static final int KEYCODE_BUTTON_4 = 191;  X
+////public static final int KEYCODE_BUTTON_5 = 192;  Y
+////public static final int KEYCODE_BUTTON_6 = 193;  Z
+////public static final int KEYCODE_BUTTON_7 = 194;  LTOP
+////public static final int KEYCODE_BUTTON_8 = 195;  RTOP
+////public static final int KEYCODE_BUTTON_9 = 196;  START	
+	
+	
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================
+	public static int parseBeebKeyIntFromString(String s)
+	{
+		int i = 0;		
+		//Log.i("BeebKeys", "parseBeebKeyIntFromString[" + s + "]");
+		Class<BeebKeys> cls = BeebKeys.class;
+		Field[] fields = BeebKeys.class.getDeclaredFields();
+		for(Field f : fields) 
+		{
+			if (s.endsWith(f.getName()))
+			{
+				try {
+					i = f.getInt(cls);
+					//Log.i("BeebKeys", "[" + s + "]=[" + f.getName() + "]=[" + i + "]");			
+				} catch (IllegalArgumentException e)
+				{
+					//Utils.writeLog("[" + s + "]=[" + f.getName() + "] IllegalArgumentException");
+				} catch (IllegalAccessException e)
+				{
+					//Utils.writeLog("[" + s + "]=[" + f.getName() + "] IllegalAccessException");
+				}
+			}
+		}
+		Log.i("BeebKeys", "parseBeebKeyIntFromString[" + s + "]=[" + i + "]");
+		return i;
+	}
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================
+	public static int parseKeyEventIntFromString(String s)
+	{		
+		//Log.i("BeebKeys", "parseKeyEventIntFromString[" + s + "]");
+		int i = 0;		
+		Class<KeyEvent> cls = KeyEvent.class;
+		Field[] fields = KeyEvent.class.getDeclaredFields();
+		for(Field f : fields) 
+		{
+			if (s.endsWith(f.getName()))
+			{
+				try {
+					i = f.getInt(cls);
+					//Log.i("KeyEvent", "[" + s + "]=[" + f.getName() + "]=[" + i + "]");			
+				} catch (IllegalArgumentException e)
+				{
+					//Utils.writeLog("[" + s + "]=[" + f.getName() + "] IllegalArgumentException");
+				} catch (IllegalAccessException e)
+				{
+					//Utils.writeLog("[" + s + "]=[" + f.getName() + "] IllegalAccessException");
+				}
+			}
+		}
+		Log.i("BeebKeys", "parseKeyEventIntFromString[" + s + "]=[" + i + "]");
+		return i;
+	}
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================
+	public static String getKeyEventNameFromInt(int i)
+	{
+		//Log.i("BeebKeys", "getKeyEventNameFromInt[" + i + "]");
+		String keyName = "";
+		if (i > 0)
+		{
+			Class<KeyEvent> cls = KeyEvent.class;
+			Field[] fields = KeyEvent.class.getDeclaredFields();
+			for(Field f : fields) 
+			{
+				try
+				{
+					if (f.getInt(cls) == i)
+					{
+						keyName = f.getName();
+						break;
+					}
+				} catch (IllegalArgumentException e)
+				{
+					//e.printStackTrace();
+				} catch (IllegalAccessException e)
+				{
+					//e.printStackTrace();
+				}
+			}
+		}
+		Log.i("BeebKeys", "getKeyEventNameFromInt[" + i + "] Code[" + keyName + "]");
+		return keyName;
+	}
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================	
+	public static String getBbcKeyNamefromInt(int i)
+	{
+		//Log.i("BeebKeys", "getBbcKeyNamefromInt[" + i + "]");
+		String scancodeName = "UNKNOWN[" + i + "]";
+		if (i > 0)
+		{
+			Class<BeebKeys> cls = BeebKeys.class;
+			Field[] fields = BeebKeys.class.getDeclaredFields();
+			for(Field f : fields) 
+			{
+				try
+				{
+					if (f.getInt(cls) == i)
+					{
+						scancodeName = f.getName();
+						break;
+					}
+				} catch (IllegalArgumentException e)
+				{
+					//e.printStackTrace();
+				} catch (IllegalAccessException e)
+				{
+					//e.printStackTrace();
+				}
+			}
+		}
+		Log.i("BeebKeys", "getBbcKeyNamefromInt[" + i + "] Code[" + scancodeName + "]");
+		return scancodeName;
+	}	
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================
 	public static final int BBCKEY_BREAK = 0xaa;
 	//  0x00    
 	public static final int BBCKEY_SHIFT = 0x100;
@@ -105,6 +261,12 @@ public class BeebKeys {
 	public static final int BBCKEY_F8 = 0x76;
 	public static final int BBCKEY_F9 = 0x77;
 	public static final int BBCKEY_BACKSLASH = 0x78;
-	public static final int BBCKEY_ARROW_RIGHT = 0x79;
-	
+	public static final int BBCKEY_ARROW_RIGHT = 0x79;	
+	// ===========================================================================
+	// === 
+	// === 
+	// === 
+	// ===========================================================================
 }
+
+

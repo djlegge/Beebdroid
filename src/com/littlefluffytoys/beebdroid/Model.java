@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import android.content.Context;
-import android.util.Log;
+//import android.util.Log;
 
 public class Model {
 
@@ -34,9 +34,6 @@ public class Model {
 	}
 	
 	ModelInfo info;
-	//ByteBuffer os;
-    //ByteBuffer rom;
-    //ByteBuffer ram;
 	ByteBuffer mem;
     ByteBuffer roms;
     
@@ -44,8 +41,7 @@ public class Model {
     	mem = ByteBuffer.allocateDirect(65536);
         roms = ByteBuffer.allocateDirect(16*16384);
     }
-    
-    
+        
     public void loadAsset(Context context, ByteBuffer buff, int offset, String assetPath) {
     	InputStream strm;
 		try {
@@ -62,26 +58,22 @@ public class Model {
 			e.printStackTrace();
 		}
     }
+    
     public void loadRoms(Context context, ModelInfo info) {
-        this.info = info;
-        
-    	// TODO: loadcmos(models[curmodel]);
-       	
+        this.info = info;        
+    	// TODO: loadcmos(models[curmodel]);       	
     	// OS ROM first.
         if (info.os != null) {
         	loadAsset(context, mem, 0xc000, "roms/"+info.os);
         }
-
         // Load BASIC and other ROMs.
         String[] romPaths = info.roms.split(";");
         for (int i=0,c=15 ; i<romPaths.length ; i++,c--) {
         	loadAsset(context, roms, c*16384, "roms/"+romPaths[i]);        	
         }
-
         //if (models[curmodel].swram) fillswram();
     }
     
-
 	public static ModelInfo[] SupportedModels = {
 		new ModelInfo("BBC A",             "os",   "a/BASIC.ROM", FLAG_I8271 | FLAG_MODELA),
 		new ModelInfo("BBC B w/8271 FDC",  "os",   "b/DFS-0.9.rom;b/BASIC.ROM", FLAG_I8271),
