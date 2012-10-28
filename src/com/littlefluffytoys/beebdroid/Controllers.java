@@ -62,11 +62,32 @@ public class Controllers {
 		if (controllerKeysLoaded == 0)
 		{
 			Utils.writeLog("Return default controller");
-			currentControllerInfo.addKey("Left",  "Z",   0,  -1, 1f, 1f, BeebKeys.BBCKEY_Z, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_BUTTON_X);
-			currentControllerInfo.addKey("Right", "X",   1,  -1, 1f, 1f, BeebKeys.BBCKEY_X, KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK);
-			currentControllerInfo.addKey("Up",    ":",  -2,  0, 1f, 1f, BeebKeys.BBCKEY_COLON, KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_BUTTON_Y);
-			currentControllerInfo.addKey("Down",  "/",  -2,  1, 1f, 1f, BeebKeys.BBCKEY_SLASH, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_CENTER);
-			currentControllerInfo.addKey("Fire", "Return",  -1,  0, 1f, 2f, BeebKeys.BBCKEY_ENTER, KeyEvent.KEYCODE_BUTTON_1, KeyEvent.KEYCODE_BUTTON_R1);
+
+			currentControllerInfo.addKey("Left",  "Z",   	0f,  1f, 1f, 1f, BeebKeys.BBCKEY_Z, KeyEvent.KEYCODE_DPAD_LEFT);
+			currentControllerInfo.addKey("Right", "X",   	1f,  1f, 1f, 1f, BeebKeys.BBCKEY_X, KeyEvent.KEYCODE_DPAD_RIGHT);			
+			currentControllerInfo.addKey("Up",    ":",  	-2f,  0f, 1f, 1f, BeebKeys.BBCKEY_COLON, KeyEvent.KEYCODE_DPAD_UP);
+			currentControllerInfo.addKey("Down",  "/",  	-2f,  1f, 1f, 1f, BeebKeys.BBCKEY_SLASH, KeyEvent.KEYCODE_DPAD_DOWN);
+			currentControllerInfo.addKey("Fire", "Return",  -1f,  0f, 1f, 2f, BeebKeys.BBCKEY_ENTER, KeyEvent.KEYCODE_BUTTON_1);
+			
+//			currentControllerInfo.addKey("Left",  "Z",   	0f,  1f, 1f, 1f, BeebKeys.BBCKEY_Z, KeyEvent.KEYCODE_DPAD_LEFT);
+//			currentControllerInfo.addKey("Right", "X",   	1f,  1f, 1f, 1f, BeebKeys.BBCKEY_X, KeyEvent.KEYCODE_DPAD_RIGHT);			
+//			currentControllerInfo.addKey("Up",    ":",  	-1f,  0f, 1f, 1f, BeebKeys.BBCKEY_COLON, KeyEvent.KEYCODE_DPAD_UP);
+//			currentControllerInfo.addKey("Down",  "/",  	-1f,  1f, 1f, 1f, BeebKeys.BBCKEY_SLASH, KeyEvent.KEYCODE_DPAD_DOWN);
+			
+//			currentControllerInfo.addKey("A",  "A",		0f,  1f, 1f, 1f, BeebKeys.BBCKEY_A, KeyEvent.KEYCODE_A);
+//			currentControllerInfo.addKey("B",  "B",		0f,  0f, 1f, 1f, BeebKeys.BBCKEY_B, KeyEvent.KEYCODE_B);
+//			//currentControllerInfo.addKey("C",  "C",		0f,  -1f, 1f, 1f, BeebKeys.BBCKEY_C, KeyEvent.KEYCODE_C);
+//			currentControllerInfo.addKey("D",  "D",		1f,  1f, 1f, 1f, BeebKeys.BBCKEY_D, KeyEvent.KEYCODE_D);
+//			currentControllerInfo.addKey("E",  "E",		1f,  0f, 1f, 1f, BeebKeys.BBCKEY_E, KeyEvent.KEYCODE_E);
+//			//currentControllerInfo.addKey("F",  "F",		1f,  -1f, 1f, 1f, BeebKeys.BBCKEY_F, KeyEvent.KEYCODE_F);
+//			currentControllerInfo.addKey("G",  "G",		-2f,  1f, 1f, 1f, BeebKeys.BBCKEY_G, KeyEvent.KEYCODE_G);
+//			currentControllerInfo.addKey("H",  "H",		-2f,  0f, 1f, 1f, BeebKeys.BBCKEY_H, KeyEvent.KEYCODE_H);
+//			//currentControllerInfo.addKey("I",  "I",		-2f,  -1f, 1f, 1f, BeebKeys.BBCKEY_I, KeyEvent.KEYCODE_I);
+//			currentControllerInfo.addKey("J",  "J",		-1f,  1f, 1f, 1f, BeebKeys.BBCKEY_J, KeyEvent.KEYCODE_J);
+//			currentControllerInfo.addKey("K",  "K",		-1f,  0f, 1f, 1f, BeebKeys.BBCKEY_K, KeyEvent.KEYCODE_K);
+//			//currentControllerInfo.addKey("L",  "L",		-1f,  -1f, 1f, 1f, BeebKeys.BBCKEY_L, KeyEvent.KEYCODE_L);
+			
+
 		}
 		return currentControllerInfo;
 	}
@@ -90,10 +111,11 @@ public class Controllers {
 			lg += separated[i] + " ";
 		}
 		Log.i("beebdroid", lg);
-		if (currentDiskInfoKey.compareToIgnoreCase(separated[0]) == 0)
+		if (separated.length >= 6 && currentDiskInfoKey.compareToIgnoreCase(separated[0]) == 0)
 		{
 			String label = separated[1];
-			String keyLabel = separated[2];
+			String keyLabel = separated[2];			
+			if (keyLabel.trim().length() == 0) keyLabel = "Space";			
 			float xc = Float.parseFloat(separated[3]);
 			float yc = Float.parseFloat(separated[4]);
 			float width = Float.parseFloat(separated[5]);
@@ -227,6 +249,18 @@ public class Controllers {
 	// === 
 	// ===========================================================================
 }
+
+//currentControllerInfo.addKey("Left",  "Z",   0f,  -1f, 1f, 1f, BeebKeys.BBCKEY_Z, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_BUTTON_X);
+//currentControllerInfo.addKey("Right", "X",   1f,  -1f, 1f, 1f, BeebKeys.BBCKEY_X, KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK);
+//currentControllerInfo.addKey("Up",    ":",  -2f,  0f, 1f, 1f, BeebKeys.BBCKEY_COLON, KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_BUTTON_Y);
+//currentControllerInfo.addKey("Down",  "/",  -2f,  1f, 1f, 1f, BeebKeys.BBCKEY_SLASH, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_CENTER);
+//currentControllerInfo.addKey("Fire", "Return",  -1f,  0f, 1f, 2f, BeebKeys.BBCKEY_ENTER, KeyEvent.KEYCODE_BUTTON_1, KeyEvent.KEYCODE_BUTTON_R1);
+// the numbers mean ?? ?? width height
+//currentControllerInfo.addKey("Left",  "Z",   	0f,  0f, 	1f, 1f, BeebKeys.BBCKEY_Z, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_BUTTON_X);
+//currentControllerInfo.addKey("Right", "X",   	1f,  0f, 	1f, 1f, BeebKeys.BBCKEY_X, KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_BACK);
+//currentControllerInfo.addKey("Up",    ":",  	2f,  1f, 	1f, 1f, BeebKeys.BBCKEY_COLON, KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_BUTTON_Y);
+//currentControllerInfo.addKey("Down",  "/",  	3f,  1f, 	1f, 1f, BeebKeys.BBCKEY_SLASH, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_CENTER);
+//currentControllerInfo.addKey("Fire", "Return",	4f,  2f, 	1f, 2f, BeebKeys.BBCKEY_ENTER, KeyEvent.KEYCODE_BUTTON_1, KeyEvent.KEYCODE_BUTTON_R1);
 
 
 //String state = Environment.getExternalStorageState();

@@ -1,0 +1,92 @@
+
+Elite		Left	<		0		0.8f	.75f	.75f	BBCKEY_LESS_THAN		KEYCODE_DPAD_LEFT
+Elite		Right	>		1.5f	0.8f	.75f	.75f	BBCKEY_MORE_THAN		KEYCODE_DPAD_RIGHT
+Elite		Up		S		.75f	.5f		.75f	.75f	BBCKEY_S				KEYCODE_DPAD_UP
+Elite		Down	X		.75f	1.25f	.75f	.75f	BBCKEY_X				KEYCODE_DPAD_DOWN
+Elite		Fire	A		-.75f	0		.75f	2f		BBCKEY_A				KEYCODE_BUTTON_1
+Elite		Acc.	SPC		-1.35f	0		.5f		1f		BBCKEY_SPACE			KEYCODE_BUTTON_8
+Elite		Dec.	?		-1.35f	1		.5f		1f		BBCKEY_QUESTIONMARK		KEYCODE_BUTTON_7
+Elite		F0		Launch	0f		0		.5f		.5f		BBCKEY_F0
+Elite		F1		Rear	.5f		0		.5f		.5f		BBCKEY_F1
+Elite		F2		Left	1f		0		.5f		.5f		BBCKEY_F2
+Elite		F3		Right	1.5f	0		.5f		.5f		BBCKEY_F3
+
+imogen Left 	Z 		0 1 1f 1f 			BBCKEY_Z 				KEYCODE_DPAD_LEFT
+imogen Right 	X 		1 1 1f 1f 			BBCKEY_X 				KEYCODE_DPAD_RIGHT
+imogen Up 		: 		-2 0 1f 1f 			BBCKEY_COLON 			KEYCODE_DPAD_UP
+imogen Down 	/ 		-2 1 1f 1f 			BBCKEY_SLASH			KEYCODE_DPAD_DOWN
+imogen Fire 	Return 	-1 0 1f 2f 			BBCKEY_ENTER			KEYCODE_BUTTON_1
+imogen [] 		[] 		0 0 0.5f 0.5f 		BBCKEY_SPACE			KEYCODE_BUTTON_9
+imogen <- 		<- 		0.5f 0 0.5f 0.5f 		BBCKEY_ARROW_LEFT 		KEYCODE_BUTTON_7
+imogen -> 		-> 		1 0 0.5f 0.5f 	BBCKEY_ARROW_RIGHT 		KEYCODE_BUTTON_8
+
+Imogen-Superior.ssd 	Left 	Z 		0 1 1f 1f 		BBCKEY_Z 				KEYCODE_DPAD_LEFT
+Imogen-Superior.ssd 	Right 	X 		1 1 1f 1f 		BBCKEY_X 				KEYCODE_DPAD_RIGHT
+Imogen-Superior.ssd 	Up 		: 		-2 0 1f 1f 		BBCKEY_COLON 			KEYCODE_DPAD_UP
+Imogen-Superior.ssd 	Down 	/ 		-2 1 1f 1f 		BBCKEY_SLASH			KEYCODE_DPAD_DOWN
+Imogen-Superior.ssd 	Fire 	Return 	-1 0 1f 2f 		BBCKEY_ENTER			KEYCODE_BUTTON_1
+Imogen-Superior.ssd 	[] 		[] 		1 0 0.5f 0.5f 	BBCKEY_SPACE			KEYCODE_BUTTON_9
+Imogen-Superior.ssd 	<- 		<- 		0 0 0.5f 0.5f 	BBCKEY_ARROW_LEFT 		KEYCODE_BUTTON_7
+Imogen-Superior.ssd		-> 		-> 		0.5f 0 0.5f 0.5f 	BBCKEY_ARROW_RIGHT 		KEYCODE_BUTTON_8
+
+zalaga Left 	Z 		0f		1	1.25f	1.25f 		BBCKEY_CAPS 			KEYCODE_DPAD_LEFT
+zalaga Right 	X 		1.25f	1	1.25f	1.25f 		BBCKEY_CTRL 			KEYCODE_DPAD_RIGHT
+zalaga Fire 	Return 	-1f		1	1f		1.25f 		BBCKEY_ENTER 			KEYCODE_BUTTON_1
+
+cylonattack.ssd 	Left 	< 		0 1 1f 1f 	BBCKEY_LESS_THAN 	KEYCODE_DPAD_LEFT
+cylonattack.ssd 	Right 	> 		1 1 1f 1f 	BBCKEY_MORE_THAN 	KEYCODE_DPAD_RIGHT
+cylonattack.ssd 	Up 		A 		-2 0 1f 1f 	BBCKEY_A 			KEYCODE_DPAD_UP
+cylonattack.ssd 	Down 	Z 		-2 1 1f 1f 	BBCKEY_Z 			KEYCODE_DPAD_DOWN
+cylonattack.ssd 	Fire 	Space 	-1 0 1f 2f 	BBCKEY_SPACE 		KEYCODE_BUTTON_1
+
+Alien8.ssd		 	Left 	<- 		0 0 1f 1f 		BBCKEY_ARROW_LEFT			KEYCODE_DPAD_LEFT
+Alien8.ssd		 	Right 	-> 		0 -1 1f 1f 		BBCKEY_ARROW_RIGHT			KEYCODE_DPAD_RIGHT
+Alien8.ssd		 	Move	Z 		0 -2 1f 1f 		BBCKEY_Z 					KEYCODE_BUTTON_1
+Alien8.ssd		 	Jump 	A	 	-1 0 1f 2f 		BBCKEY_A					KEYCODE_BUTTON_2
+Alien8.ssd		 	Take 	1	 	-1 -1 1f 2f 		BBCKEY_1					KEYCODE_BUTTON_3
+
+Thrust		Left		Caps		    0f		  -1		 1f		 1f		  BBCKEY_CAPS		 KEYCODE_DPAD_LEFT
+Thrust		Right		Ctrl		   1f		  -1		 1f		 1f		  BBCKEY_CTRL		 KEYCODE_DPAD_RIGHT
+Thrust		Thrust		Shift		 -1f		  0		 1f		 2f		  BBCKEY_SHIFT		 KEYCODE_BUTTON_2
+Thrust		Fire		Return		 -2f		  0		 1f		 1f		  BBCKEY_ENTER		 KEYCODE_BUTTON_1
+Thrust		Shield		Space		 -2f		  1		 1f		 1f		  BBCKEY_SPACE		 KEYCODE_BUTTON_8
+
+RocketRaid		 Back 	   SPACE 	   0	  -1	 1f	 1f	 BBCKEY_SPACE	 KEYCODE_DPAD_LEFT
+RocketRaid		 Forwards 	  SHIFT 	   1	  -1	 1f	 1f	 BBCKEY_SHIFT	 KEYCODE_DPAD_RIGHT
+RocketRaid		 Up 	     A 	  -2	  0	 1f	 1f	 BBCKEY_A	 KEYCODE_DPAD_UP
+RocketRaid		 Down 	   Z 	  -2	  1	 1f	 1f	 BBCKEY_Z	 KEYCODE_DPAD_DOWN
+RocketRaid		 Fire 	  Return 	  -1	  0	 1f	 1f	 BBCKEY_ENTER	 KEYCODE_DPAD_CENTER
+RocketRaid		 Bomb 	  Tab 	  -1	  1	 1f	 1f	 BBCKEY_TAB	 KEYCODE_BACK
+
+CastleQuest		 Left 	  Z 	   0	  -1	 1f	 1f	 BBCKEY_Z	 KEYCODE_DPAD_LEFT
+CastleQuest		 Right 	  X 	   1	  -1	 1f	 1f	 BBCKEY_X	 KEYCODE_DPAD_RIGHT
+CastleQuest		 Up 	  : 	  -1	  0	 1f	 1f	 BBCKEY_COLON	 KEYCODE_DPAD_UP
+CastleQuest		 Down 	  / 	  -1	  1	 1f	 1f	 BBCKEY_SLASH	 KEYCODE_DPAD_DOWN
+CastleQuest		 Pick Up 	  P 	   0	  1	 1f	 1f	 BBCKEY_P	 KEYCODE_BUTTON_Y
+CastleQuest		 Drop 	  D 	   1	  1	 1f	 1f	 BBCKEY_D	 KEYCODE_DPAD_CENTER
+CastleQuest		 Jump 	  Return 	   2	  1	  1f	 1f	 BBCKEY_ENTER	 KEYCODE_BUTTON_L1	 KEYCODE_BUTTON_R1
+
+chuckie_egg		 Left 	  ,	 	      0	   1	  1f	 1f	 BBCKEY_COMMA	 KEYCODE_DPAD_LEFT
+chuckie_egg		 Right 	  . 	      1	   1	  1f	 1f	 BBCKEY_PERIOD	 KEYCODE_DPAD_RIGHT
+chuckie_egg		 Up 	  A 	     -2	    0	  1f	 1f	 BBCKEY_A	 KEYCODE_DPAD_UP	 KEYCODE_BUTTON_Y
+chuckie_egg		 Down 	  Z 	     -2	    1	  1f	 1f	 BBCKEY_Z	  KEYCODE_DPAD_CENTER
+chuckie_egg		 Jump 	  Space	     -1	    0	  1f	 2f	 BBCKEY_SPACE	 KEYCODE_BUTTON_1
+chuckie_egg		 S 	      S 	 1f	   0f	 .5f	 .5f	 BBCKEY_S
+chuckie_egg		 1 	      1 	 0f	 0f	 .5f	 .5f	 BBCKEY_1
+
+dare_devil_dennis		 Accel 	  Shift 	   0	  0	 1f	 2f	 BBCKEY_SHIFT	 KEYCODE_DPAD_RIGHT	 KEYCODE_BACK
+dare_devil_dennis		 Stop 	  Return 	   1	  0	 1f	 2f	 BBCKEY_ENTER	 KEYCODE_DPAD_LEFT	 KEYCODE_BUTTON_X
+dare_devil_dennis		 Jump 	   	  -2	  0	 2f	 2f	 BBCKEY_SPACE	 KEYCODE_BUTTON_L1	 KEYCODE_BUTTON_R1
+
+planetoid		 Up 	     A 	  -2	  0	 1f	 1f	 BBCKEY_A	 KEYCODE_DPAD_UP
+planetoid		 Down 	   Z 	  -2	  1	 1f	 1f	 BBCKEY_Z	 KEYCODE_DPAD_DOWN
+planetoid		 Reverse 	   SPACE 	   0	  -1	 1f	 1f	 BBCKEY_SPACE	 KEYCODE_DPAD_LEFT
+planetoid		 Forwards 	  SHIFT 	   1	  -1	 1f	 1f	 BBCKEY_SHIFT	 KEYCODE_DPAD_RIGHT
+planetoid		 Fire 	  Return 	  -1	  0	 1f	 1f	 BBCKEY_ENTER	 KEYCODE_DPAD_CENTER
+planetoid		 Bomb 	  Tab 	  -1	  1	 1f	 1f	 BBCKEY_TAB	 KEYCODE_BACK
+		
+arcadians label keylabel 0f 1f 1f 1f BBCKEY_CAPS KEYCODE_DPAD_LEFT 
+arcadians label keylabel 1f 1f 1f 1f BBCKEY_CTRL KEYCODE_DPAD_RIGHT 
+arcadians label keylabel -1f 0 1f 2f BBCKEY_ENTER KEYCODE_BUTTON_1 
+arcadians label keylabel 0 0 0.5f 0.5f BBCKEY_1 KEYCODE_BUTTON_9 
+

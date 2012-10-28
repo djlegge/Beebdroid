@@ -17,6 +17,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 //import android.util.Log;
 //import android.util.Log;
+//import android.util.Log;
 //import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,39 +52,48 @@ public class TouchpadsView extends View {
 			this.pressed = pressed;
 		}
     }
-	
-	
-	public ArrayList<Key> allkeys = new ArrayList<Key>(); // controller keys, not bbc keyboard keys
-	
+		
+	public ArrayList<Key> allkeys = new ArrayList<Key>(); // controller keys, not bbc keyboard keys	
 	public boolean shiftPressed;
 	public Beebdroid beebdroid;
 	private Drawable padDrawable, padDrawableFn, padDrawableHilite;
-	private Paint paint, paintBig, paintTiny;
+	private Paint paint, paintBig, paintTiny, paintRectOutline;
 
 	public TouchpadsView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
 		padDrawable = getResources().getDrawable(R.drawable.key);
 		padDrawableFn = getResources().getDrawable(R.drawable.key_fn);
 		padDrawableHilite = getResources().getDrawable(R.drawable.pad_pressed);
+		
 		int alpha = (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) ? 127:255;
 		padDrawable.setAlpha(alpha);
 		padDrawableFn.setAlpha(alpha);
 		padDrawableHilite.setAlpha(alpha);
+		
 		paintTiny = new Paint();
 		paintTiny.setColor(Color.WHITE);
 		paintTiny.setTextSize(12);
 		paintTiny.setTextAlign(Align.CENTER);
 		paintTiny.setAntiAlias(true);
+		
 		paint = new Paint();
 		paint.setColor(Color.WHITE);
 		paint.setTextSize(22);
 		paint.setTextAlign(Align.CENTER);
 		paint.setAntiAlias(true);
+		
 		paintBig = new Paint();
 		paintBig.setColor(Color.WHITE);
 		paintBig.setTypeface(Typeface.DEFAULT_BOLD);
 		paintBig.setTextSize(30);
 		paintBig.setTextAlign(Align.CENTER);
+		
+		paintRectOutline = new Paint();
+		paintRectOutline.setColor(Color.GRAY);
+		paintRectOutline.setStrokeWidth(2);	
+		paintRectOutline.setStyle(Paint.Style.STROKE);  
+		
 	}
 		
 	
@@ -120,6 +130,7 @@ public class TouchpadsView extends View {
 	private Key hitTest(int x, int y) {
 		for (Key key : allkeys) {
 			if (key.bounds.contains(x, y)) {
+				//Log.i("TouchpadsView", "Key[" + key.label + "] Contains [" + x + "][" + y + "]");
 				return key;
 			}
 		}
@@ -242,20 +253,29 @@ public class TouchpadsView extends View {
 		}
 		return true;
 	}
-	
-	
+
     @Override 
     protected void onDraw(Canvas canvas) {
-    	//int drawCount = 0;
+    	int drawCount = 0;
     	for (Key key : allkeys) {
-    		Drawable d = key.pressed?padDrawableHilite:padDrawable;
-    		if (0 != (key.flags & 1)) {
-    			d = padDrawableFn;
-    		}
-    		d.setBounds((int)key.bounds.left, (int)key.bounds.top, (int)key.bounds.right, (int)key.bounds.bottom);
-    		d.draw(canvas);
+    		
+    		// TODO this bit is slow
+//    		Drawable d = key.pressed?padDrawableHilite:padDrawable;
+//    		if (0 != (key.flags & 1)) {
+//    			d = padDrawableFn;
+//    		}    		
+//    		d.setBounds((int)key.bounds.left, (int)key.bounds.top, (int)key.bounds.right, (int)key.bounds.bottom);
+//    		d.draw(canvas);
+    		// TODO this bit is slow
+
+    		//Log.i("Beebdroid", "Label[" + key.label + "] Rect[" + (int)key.bounds.left + "][" + (int)key.bounds.top + "][" + (int)key.bounds.right + "][" + (int)key.bounds.bottom + "]");
+    		
+    		//paintRectOutline.setColor(drawCount); // Color.RED);
+    		
+    		canvas.drawRect((int)key.bounds.left, (int)key.bounds.top, (int)key.bounds.right, (int)key.bounds.bottom, paintRectOutline);
+
     		float y = key.bounds.centerY();
-    		if (key.labelTop != null) {
+    		if (key.labelTop != null) { // does this key have a 'shift' option
     			if (shiftPressed) {
 	    			y-=Beebdroid.dp(4);
 	    	 		canvas.drawText(key.labelTop, key.bounds.centerX(), y, paint);
@@ -269,10 +289,12 @@ public class TouchpadsView extends View {
 	       			canvas.drawText(key.label, key.bounds.centerX(), y, paint);
     			}
     		}
-    		else {
+    		else 
+    		{
     			canvas.drawText(key.label, key.bounds.centerX(), y, key.label.length() > 1 ? paintTiny : paint);
     		}
-    		//drawCount += 1;
+    		//Log.i("Beebdroid", "Label[" + key.label + "]");
+    		drawCount += 1;
     	}
     	//Log.i("Beebdroid", "TouchpadsView draw[" + drawCount + "]");
     }		

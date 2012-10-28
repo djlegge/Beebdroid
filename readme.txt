@@ -1,4 +1,15 @@
 
+Experimental release 28th October 2012
+
+Changes
+=======
+
+- Now possible to load games stored in //SDcard/Beebdroid/files/disks/*.ssd
+- Now possible to use USB attached joysticks and keyboards (Logitech Wingman Action works)
+- Keys can now be configured per game.  Config stored in human readable text file in //SDcard/Beebdroid/config/beebdroidgamecontrols.txt
+- Small change to the game loop timing which improves performance
+- Changes to how the keyboard (or controls) are rendered which improves performance
+
 Troubleshooting
 ===============
 

@@ -19,19 +19,19 @@ public class ControllerInfo {
 		int androidKeyCode2; // DCH added		
 		float xc,yc, width, height;
     }
-	public static class TriggerAction {
-		short pc_trigger;
-		public TriggerAction(short pc_trigger) {
-			this.pc_trigger = pc_trigger;
-		}
-	}
-	public static class TriggerActionSetController extends TriggerAction {
-		public TriggerActionSetController(short pc_trigger, ControllerInfo controllerInfo) {
-			super(pc_trigger);
-			this.controllerInfo = controllerInfo;
-		}
-		ControllerInfo controllerInfo;
-	}
+//	public static class TriggerAction {
+//		short pc_trigger;
+//		public TriggerAction(short pc_trigger) {
+//			this.pc_trigger = pc_trigger;
+//		}
+//	}
+//	public static class TriggerActionSetController extends TriggerAction {
+//		public TriggerActionSetController(short pc_trigger, ControllerInfo controllerInfo) {
+//			super(pc_trigger);
+//			this.controllerInfo = controllerInfo;
+//		}
+//		ControllerInfo controllerInfo;
+//	}
 //	public void addTrigger(short pc, ControllerInfo switchToController) {
 //		TriggerActionSetController trigger = new TriggerActionSetController(pc, switchToController);
 //		triggers.add(trigger);

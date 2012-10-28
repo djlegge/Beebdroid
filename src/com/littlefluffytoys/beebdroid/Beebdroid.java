@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -70,8 +71,13 @@ import android.graphics.Bitmap;
 
 public class Beebdroid extends Activity implements AdListener
 {
+	public static Context myContext;
 	private static final String TAG="Beebdroid";
 	public static boolean use25fps = false;
+	
+	//public static int controllerScreenWidth = 800;
+	//public static int controllerScreenHeight = 600;
+	
 	Model model;
     DiskInfo diskInfo;
     int keyboardTextWait;
@@ -145,6 +151,10 @@ public class Beebdroid extends Activity implements AdListener
     			}
     			beebView.initgl();
     			bbcInitGl(beebView.width, beebView.height);
+    			
+    			//controllerScreenWidth = beebView.width;
+    			//controllerScreenHeight = beebView.height;
+    			
     		}
 			bbcRun();
 			// === 
@@ -195,7 +205,11 @@ public class Beebdroid extends Activity implements AdListener
     		shiftDown = true;
     	}    	    	
     	Key akc = controller.getBBCkeyGivenAndroidKeyCode(keycode);
-    	if (akc != null) bbcKeyEvent(akc.scancode, shiftDown?1:0, 1);    	
+    	if (akc != null) 
+    		{
+    		bbcKeyEvent(akc.scancode, shiftDown?1:0, 1);
+    		return true;
+    		}
     	return super.onKeyDown(keycode, event);
     }    
 	// ===========================================================================
@@ -209,7 +223,11 @@ public class Beebdroid extends Activity implements AdListener
     		shiftDown = false;
     	}    	
     	Key akc = controller.getBBCkeyGivenAndroidKeyCode(keycode);
-    	if (akc != null) bbcKeyEvent(akc.scancode, shiftDown?1:0, 0); 
+    	if (akc != null) 
+    		{
+    		bbcKeyEvent(akc.scancode, shiftDown?1:0, 0);
+    		return true;
+    		}
     	return super.onKeyUp(keycode, event);
     }
 	// ===========================================================================
@@ -276,13 +294,20 @@ public class Beebdroid extends Activity implements AdListener
 	// === 
 	// === 
 	// === 
-	// ===========================================================================	
+	// ===========================================================================
+    
+    
+    
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        
+        myContext = this;
+        
         WakeLockAcquire();
         CreateSDcardDirectories();
+        
         
         
         // TOxDO remove this test stuff
@@ -351,6 +376,7 @@ public class Beebdroid extends Activity implements AdListener
 
         DPI_MULT = getResources().getDisplayMetrics().density;
         DP_SCREEN_WIDTH = getResources().getDisplayMetrics().widthPixels;
+        DP_SCREEN_HEIGHT = getResources().getDisplayMetrics().heightPixels;
 
         // Detect the Xperia Play, for which we do special magic
 //        if (Build.DEVICE.equalsIgnoreCase("R800i") || Build.DEVICE.equalsIgnoreCase("zeus")) {
@@ -801,7 +827,8 @@ public class Beebdroid extends Activity implements AdListener
 
 
     public static float DPI_MULT=1;
-    public static float DP_SCREEN_WIDTH=320;
+    public static float DP_SCREEN_WIDTH = 320;
+    public static float DP_SCREEN_HEIGHT = 200;
 	public static float dp(float d) {
 		return  (d * DPI_MULT + 0.5f);
 	}
@@ -863,14 +890,15 @@ public class Beebdroid extends Activity implements AdListener
 	        gl = (GL10)ctxt.getGL();
 	    	
 	    }
-//	    @Override
-//	    public void onMeasure(int ws, int hs) {
-//	    	super.onMeasure(ws, hs);
-////	    	int w = getMeasuredWidth();
-////	    	int h = getMeasuredHeight();
-//	    	//rcDst = new Rect(0,0,w, h);//(int)(w * ASPECT));
-//	    	//Log.d(TAG, "beebView is " + rcDst.width() + "x" + rcDst.height());
-//	    }
+
+   	    @Override
+	    public void onMeasure(int ws, int hs) {
+	    	super.onMeasure(ws, hs);
+	    	//int w = getMeasuredWidth();
+	    	//int h = getMeasuredHeight();
+	    	//rcDst = new Rect(0,0,w, h);//(int)(w * ASPECT));
+	    	//Log.d(TAG, "beebView is " + rcDst.width() + "x" + rcDst.height());
+	    }
 
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
@@ -1183,14 +1211,15 @@ public class Beebdroid extends Activity implements AdListener
 	
 	// =======================================================================
 	// === 
-	// === Create the directories on the SD card
+	// === Create the directories on the SD card.
+	// === Create the default config file if it doesn't exist. 
 	// === 
 	// =======================================================================
     private static void CreateSDcardDirectories()
     {
         try
         {
-        	File dir = new File(Utils.SDrootPathSlash + "logs");
+        	File dir = new File(Utils.SDrootPathSlash + "logs/");
     		dir.mkdirs();
         }
     	catch (Exception e)
@@ -1199,7 +1228,7 @@ public class Beebdroid extends Activity implements AdListener
     	}
         try
         {
-        	File dir = new File(Utils.SDrootPathSlash + "disks");
+        	File dir = new File(Utils.SDrootPathSlash + "disks/");
     		dir.mkdirs();
         }
     	catch (Exception e)
@@ -1208,17 +1237,34 @@ public class Beebdroid extends Activity implements AdListener
     	}
         try
         {
-        	File dir = new File(Utils.SDrootPathSlash + "config");
+        	File dir = new File(Utils.SDrootPathSlash + "config/");
     		dir.mkdirs();
         }
     	catch (Exception e)
     	{
     		e.printStackTrace();
+    	}
+    	File cfgFile = new File (Controllers.controlsConfigFilename);
+    	if (cfgFile.exists() == false)
+    	{
+    		String defaultCfg = Utils.readStringFromResource(myContext, R.raw.beebdroidgamecontrols);
+    		Log.i("Beebdroid", "Config file length [" + defaultCfg.length() + "]");
+    		try
+    		{
+    			FileWriter out = new FileWriter(Controllers.controlsConfigFilename);
+    			out.write(defaultCfg);
+    			out.close();
+    			Log.i("Beebdroid", "File written");
+    		}
+    		catch (Exception e)
+    		{
+    			e.printStackTrace();
+    		}
     	}
     }
 	// =======================================================================
 	// === 
-	// === Aquire and release a wakelock 
+	// === Acquire and release a wakelock 
 	// === 
 	// === http://code.google.com/p/android/issues/detail?id=11622  WakeLock under-locked error
 	// === http://stackoverflow.com/questions/5920798/wakelock-finalized-while-still-held

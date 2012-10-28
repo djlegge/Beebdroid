@@ -53,9 +53,7 @@ public class EditGameKeyActivity extends Activity
 			@Override
 			public void onClick(View v)
 			{
-				
-				if (androidKey < 0) androidKey = 42; // TODO remove
-				
+				//if (androidKey < 0) androidKey = 42; // TODO remove
 				ConfigKey ck = new ConfigKey();
 				ck.label = "label";
 				ck.keylabel = "keylabel";

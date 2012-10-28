@@ -5,10 +5,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 //import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 //import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
@@ -29,6 +32,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Environment;
 import android.util.Log;
@@ -38,6 +42,44 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Utils {
+	
+	
+	
+
+	// TODO http://snipplr.com/view/51608/
+	
+	
+	
+	public static String readStringFromResource(Context ctx, int resourceID) {
+		StringBuilder contents = new StringBuilder();
+		String sep = System.getProperty("line.separator");	    
+		try {			
+			InputStream is = ctx.getResources().openRawResource(resourceID);
+			BufferedReader input =  new BufferedReader(new InputStreamReader(is), 1024*8);
+			try {
+				String line = null; 
+				while (( line = input.readLine()) != null){
+					contents.append(line);
+					contents.append(sep);
+				}
+			}
+			finally {
+				input.close();
+			}
+		}
+		catch (FileNotFoundException ex) {
+			Log.e("Utils", "Couldn't find the file " + resourceID  + " " + ex);
+			return null;
+		}
+		catch (IOException ex){
+			Log.e("Utils", "Error reading file " + resourceID + " " + ex);
+			return null;
+		}	    
+		return contents.toString();
+	}
+	
+
+
 	
 	// === 
 	// === Root directory on the SD card that we'll put all our files in 

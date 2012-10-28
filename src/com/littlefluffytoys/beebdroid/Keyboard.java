@@ -203,7 +203,7 @@ public class Keyboard extends TouchpadsView {
 			float excess_unit = (sumweights==0) ? 0 : (excess_space / sumweights);
 			for (Key key : keys) {
 				float keywidth = Beebdroid.dp(key.layout_width) + excess_unit * key.layout_weight;
-				key.bounds = new RectF(x, ftop, x+keywidth, fbottom);
+				key.bounds = new RectF(x, ftop, x+keywidth, fbottom); // this is correct
 				x += keywidth;
 			}
 		}
