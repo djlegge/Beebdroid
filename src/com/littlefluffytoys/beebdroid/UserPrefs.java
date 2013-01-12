@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011, Little Fluffy Toys Ltd
+ * Copyright Â© 2011, Little Fluffy Toys Ltd
  * All rights reserved.
  */
 package com.littlefluffytoys.beebdroid;
