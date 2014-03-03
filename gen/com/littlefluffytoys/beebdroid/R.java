@@ -232,7 +232,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:animationDuration
+          @attr name com.littlefluffytoys.beebdroid:animationDuration
         */
         public static final int SlidingDrawer_animationDuration = 0;
         /**
@@ -244,7 +244,7 @@ containing a value of this type.
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
 <p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
-          @attr name android:closedHandle
+          @attr name com.littlefluffytoys.beebdroid:closedHandle
         */
         public static final int SlidingDrawer_closedHandle = 7;
         /**
@@ -254,7 +254,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 
           <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
-          @attr name android:content
+          @attr name com.littlefluffytoys.beebdroid:content
         */
         public static final int SlidingDrawer_content = 3;
         /**
@@ -264,7 +264,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 
           <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
-          @attr name android:handle
+          @attr name com.littlefluffytoys.beebdroid:handle
         */
         public static final int SlidingDrawer_handle = 2;
         /**
@@ -278,7 +278,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:linearFlying
+          @attr name com.littlefluffytoys.beebdroid:linearFlying
         */
         public static final int SlidingDrawer_linearFlying = 4;
         /**
@@ -290,7 +290,7 @@ containing a value of this type.
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
 <p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
-          @attr name android:openedHandle
+          @attr name com.littlefluffytoys.beebdroid:openedHandle
         */
         public static final int SlidingDrawer_openedHandle = 6;
         /**
@@ -309,7 +309,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 <tr><td><code>left</code></td><td>2</td><td></td></tr>
 <tr><td><code>right</code></td><td>3</td><td></td></tr>
 </table>
-          @attr name android:position
+          @attr name com.littlefluffytoys.beebdroid:position
         */
         public static final int SlidingDrawer_position = 1;
         /**
@@ -325,7 +325,7 @@ some parent container.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:weight
+          @attr name com.littlefluffytoys.beebdroid:weight
         */
         public static final int SlidingDrawer_weight = 5;
     };
