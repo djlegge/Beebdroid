@@ -1,6 +1,11 @@
 /bin
 /obj
 /out
+/libs/armeabi*/*.so
+/build.xml
+/local.properties
+/proguard-project.txt
+/project.properties
 /gen
 
 *.iws
