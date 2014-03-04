@@ -25,10 +25,6 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.google.ads.Ad;
-import com.google.ads.AdListener;
-import com.google.ads.AdView;
-import com.google.ads.AdRequest.ErrorCode;
 //import com.littlefluffytoys.beebdroid.ControllerInfo.TriggerAction;
 import com.littlefluffytoys.beebdroid.TouchpadsView.Key;
 
@@ -69,7 +65,7 @@ import android.graphics.Bitmap;
 //import android.graphics.Rect;
 
 
-public class Beebdroid extends Activity implements AdListener
+public class Beebdroid extends Activity
 {
 	public static Context myContext;
 	private static final String TAG="Beebdroid";
@@ -197,8 +193,7 @@ public class Beebdroid extends Activity implements AdListener
     			SDimageLoaded = false;
     			SavedGameInfo.current = null;
     			showKeyboard(1);
-    			Analytics.trackPageView(getApplicationContext(), "/reset");
-    			return true;
+     			return true;
     		}
     	}
     	if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT || keycode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
@@ -268,29 +263,7 @@ public class Beebdroid extends Activity implements AdListener
 	private static final String PREFKEY_AD_TIMESTAMP = "AdTimestamp";
     static final long AD_POSTPONE_TIME = 3 * 60 * 60 * 1000; // 3 hours
 	// === 
-    void setAdVisibility() {
-        final AdView adView = (AdView)findViewById(R.id.adView);
-		if (adView != null) {
-			final long adTimestamp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getLong(PREFKEY_AD_TIMESTAMP, 0);
-			if (adTimestamp == 0) {
-				postponeAds(); // first time run - postpone ads
-			}
-			final boolean showAds = (adTimestamp != 0 && (adTimestamp > System.currentTimeMillis() || (System.currentTimeMillis() - adTimestamp > AD_POSTPONE_TIME)));
-			
-	    	if (showAds) {
-	    		adView.setVisibility(View.VISIBLE);
-	    		adView.setAdListener(this);
-	    		findViewById(R.id.btnInput).setVisibility(View.GONE);
-	    		findViewById(R.id.btnSave).setVisibility(View.GONE);
-	    	}
-	    	else {
-	    		adView.setVisibility(View.INVISIBLE);
-	    		findViewById(R.id.btnInput).setVisibility(View.VISIBLE);
-	    		findViewById(R.id.btnSave).setVisibility(View.VISIBLE);
-	    	}
-		}
-    }
-	// ===========================================================================
+ 	// ===========================================================================
 	// === 
 	// === 
 	// === 
@@ -368,13 +341,10 @@ public class Beebdroid extends Activity implements AdListener
         use25fps = false; // Build.DEVICE.equals("bravo"); // TOxDO what do we do wtih this?
         
         //Log.d("Build", "Its a " + Build.DEVICE);
-        Analytics.trackPageView(getApplicationContext(), "/start");
-        
+         
         setContentView(R.layout.activity_beebdroid);
 
-		setAdVisibility();
-
-        DPI_MULT = getResources().getDisplayMetrics().density;
+	    DPI_MULT = getResources().getDisplayMetrics().density;
         DP_SCREEN_WIDTH = getResources().getDisplayMetrics().widthPixels;
         DP_SCREEN_HEIGHT = getResources().getDisplayMetrics().heightPixels;
 
@@ -498,7 +468,6 @@ public class Beebdroid extends Activity implements AdListener
     	bbcExit();
     	if (audioEnabled) audio.stop();
     	playing = false;
-        Analytics.dispatch();
         WakeLockRelease();
 //    	System.exit(0); // until native lib is stable
     }
@@ -699,7 +668,6 @@ public class Beebdroid extends Activity implements AdListener
 		this.diskInfo = diskInfo;
 		keyConfigFilename = diskInfo.key;
 		Utils.writeLog("Beebdroid.loadDisk key[" + diskInfo.key + "] diskUrl[" + diskInfo.diskUrl + "]");
-		Analytics.trackEvent(getApplicationContext(), "Load disk", "" + diskInfo.key, "" + diskInfo.title, 0);
 		diskImage = loadFile(new File(getFilesDir(), diskInfo.key));
 		// Load the disc and do the disc-start stuff
 		if (!TextUtils.isEmpty(diskInfo.bootCmd)) {
@@ -1108,30 +1076,6 @@ public class Beebdroid extends Activity implements AdListener
 	@Override  
 	protected void onDestroy() {
 		super.onDestroy();
-        Analytics.trackPageView(getApplicationContext(), "/stop");
-        Analytics.dispatchAndStopSession();
-	}
-	@Override
-	public void onDismissScreen(Ad arg0) {
-	}
-	@Override
-	public void onFailedToReceiveAd(Ad arg0, ErrorCode arg1) {
-	}
-	@Override
-	public void onLeaveApplication(Ad arg0) {
-		postponeAds();
-	}
-	@Override
-	public void onPresentScreen(Ad arg0) {
-		postponeAds();
-	}
-	@Override
-	public void onReceiveAd(Ad arg0) {
-	}
-	private void postponeAds() {
-		Log.d(TAG, "Postponing ads for 3 hours");
-		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putLong(PREFKEY_AD_TIMESTAMP, System.currentTimeMillis()).commit();
-		setAdVisibility();
 	}
 	
 	

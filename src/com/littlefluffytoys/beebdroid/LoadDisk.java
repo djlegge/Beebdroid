@@ -449,7 +449,6 @@ public class LoadDisk extends Activity implements OnTabChangeListener {
 				else {
 					tmpFile.renameTo(targetFile);
 				}
-				Analytics.trackPageView(getApplicationContext(), "/download/" + onlineDiskInfo.key);
 				Toast.makeText(LoadDisk.this, "Installed OK!", Toast.LENGTH_SHORT).show();
 				setResult(ID_RESULT_LOADDISK);
 				selectedDisk = InstalledDisks.add(onlineDiskInfo);
