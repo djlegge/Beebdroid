@@ -46,19 +46,10 @@
             android:label="Load Disk"
             android:theme="@style/DialogNoTitle" />
         <activity
-            android:name="com.google.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode" />
-        <activity
             android:name=".AboutActivity"
             android:configChanges="orientation"
             android:label="About"
             android:theme="@android:style/Theme.Dialog" />
-        <meta-data
-            android:name="ADMOB_ALLOW_LOCATION_FOR_ADS"
-            android:value="true" />
-        <meta-data
-            android:name="ADMOB_PUBLISHER_ID"
-            android:value="a14ea4abdce59d1" />
         <activity
             android:name=".EditGameKeyActivity"
             android:label="@string/title_activity_edit_game_key" >
@@ -68,12 +59,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="com.android.vending.BILLING" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <uses-feature
-        android:name="android.hardware.location"
-        android:required="true" />
     <uses-feature
         android:name="android.hardware.location.network"
         android:required="false" />
