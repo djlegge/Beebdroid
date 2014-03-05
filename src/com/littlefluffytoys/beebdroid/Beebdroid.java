@@ -100,7 +100,7 @@ public class Beebdroid extends Activity
     public native void bbcExit();
     public native int bbcRun();
     public native int bbcInitGl(int width, int height);
-    public native void bbcLoadDisc(ByteBuffer disc, int autoboot);
+    public native void bbcLoadDisc(ByteBuffer disc, int autoboot, int disk_type);
     //public native void bbcSetTriggers(short[] pc_triggers);
     public native void bbcKeyEvent(int scancode, int flags, int down);
     public native int bbcSerialize(byte[] buffer);
@@ -488,7 +488,7 @@ public class Beebdroid extends Activity
     		byte[] diskBytes = intent.getExtras().getByteArray("disk_image");
     		diskImage = ByteBuffer.allocateDirect(diskBytes.length);
     		diskImage.put(diskBytes);
-        	bbcLoadDisc(diskImage, 1);    
+        	bbcLoadDisc(diskImage, 1, 0);    // Assume single sided disk for now
 		}
         
         // Disk image opened via intent (e.g. browser download)
@@ -508,7 +508,7 @@ public class Beebdroid extends Activity
 		    		diskImage = ByteBuffer.allocateDirect(diskBytes.length);
 		    		diskImage.put(diskBytes);
 					Log.d(TAG, "fileContents " + diskBytes.length);
-					bbcLoadDisc(diskImage, 1);
+					bbcLoadDisc(diskImage, 1, 0);	// Assume single sided disk for now
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -632,7 +632,12 @@ public class Beebdroid extends Activity
 		diskImage = loadFile(new File(fullPath));
 		SDimageLoaded = true;
 		bbcBreak(0);
-		bbcLoadDisc(diskImage, 1);
+		
+		if (filename.contains(".dsd") || filename.contains(".DSD"))
+			bbcLoadDisc(diskImage, 1, 1);		// Load double sided disk
+		else
+			bbcLoadDisc(diskImage, 1, 0);		// Single sided.
+			
 		keyboardTextWait = 20;
 		doFakeKeys("*EXEC !BOOT");
 //		if (!TextUtils.isEmpty(diskInfo.bootCmd)) {
@@ -665,16 +670,23 @@ public class Beebdroid extends Activity
 	// ===========================================================================	
     
     private void loadDisk(DiskInfo diskInfo, boolean bootIt) {
+    	int disk_type;
 		this.diskInfo = diskInfo;
 		keyConfigFilename = diskInfo.key;
 		Utils.writeLog("Beebdroid.loadDisk key[" + diskInfo.key + "] diskUrl[" + diskInfo.diskUrl + "]");
 		diskImage = loadFile(new File(getFilesDir(), diskInfo.key));
+		
+		if (keyConfigFilename.contains(".dsd") || keyConfigFilename.contains(".DSD"))
+			disk_type = 1;		// Double sided disk
+		else
+			disk_type = 0;		// Single sided disk
+		
 		// Load the disc and do the disc-start stuff
 		if (!TextUtils.isEmpty(diskInfo.bootCmd)) {
 			if (bootIt) {
 				bbcBreak(0);
 			}
-    		bbcLoadDisc(diskImage, 0);
+    		bbcLoadDisc(diskImage, 0, disk_type);
 			keyboardTextWait = 20;
 			
 			
@@ -683,7 +695,7 @@ public class Beebdroid extends Activity
 			doFakeKeys(diskInfo.bootCmd);
 		}
 		else {
-			bbcLoadDisc(diskImage, (bootIt && TextUtils.isEmpty(diskInfo.bootCmd)) ? 1 : 0);
+			bbcLoadDisc(diskImage, (bootIt && TextUtils.isEmpty(diskInfo.bootCmd)) ? 1 : 0, disk_type);
 		}
 		// Set the right controller for the disk
 //		ControllerInfo controllerInfo = Controllers.controllersForKnownDisks.get(diskInfo.key);

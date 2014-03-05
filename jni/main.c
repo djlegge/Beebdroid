@@ -73,14 +73,14 @@ JNIEXPORT void JNICALL Java_com_littlefluffytoys_beebdroid_Beebdroid_bbcBreak(JN
 }
 
 
-JNIEXPORT void JNICALL Java_com_littlefluffytoys_beebdroid_Beebdroid_bbcLoadDisc(JNIEnv * env, jobject  obj, jobject directBuffer, jint do_autoboot)
+JNIEXPORT void JNICALL Java_com_littlefluffytoys_beebdroid_Beebdroid_bbcLoadDisc(JNIEnv * env, jobject  obj, jobject directBuffer, jint do_autoboot, jint disk_type)
 {
 	LOGI("bbcLoadDisc");
 
-	unsigned int size = (*env)->GetDirectBufferCapacity(env, directBuffer);
-	unsigned char* disc = (*env)->GetDirectBufferAddress(env, directBuffer);
+	unsigned int size = (*env)->GetDirectBufferCapacity(env, directBuffer);		// size = size of buffer ie. size of disk image.
+	unsigned char* disc = (*env)->GetDirectBufferAddress(env, directBuffer);		// pointer the the disk image loaded.
 
-	loaddisc(0, 0, disc, size);
+	loaddisc(0, disk_type, disc, size);		// Second parameter needs to be 1 for a double sided disk or 0 otherwise.
 
 	if (do_autoboot) {
 		autoboot = 150;
