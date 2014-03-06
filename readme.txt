@@ -1,5 +1,11 @@
-
-Experimental release 28th October 2012
+6th March 2014.
+This is a fork of DuncanHodson with some cherry-picks from richq.
+DuncanHodson gave the ability to load locally stores disk images and richq removed tracking and adds.
+The main change here is that locally stored double sided disk images now can be loaded and read.
+Previously double sided disk images just gave 'Disk Fault'.
+.
+.
+Experimental release 28th October 2012 (DuncanHodson)
 
 Changes
 =======
